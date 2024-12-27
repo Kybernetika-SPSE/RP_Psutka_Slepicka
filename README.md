@@ -5,8 +5,8 @@
   - enclosure
 - lacator (lokátor)
   - order components ✔
-  - WiFi
-    - scanning ✔
+  - WiFi ⚙ 
+    - scanning ⚙
     - attaching positional information
     - saving
     - loading
