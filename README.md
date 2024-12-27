@@ -8,7 +8,7 @@
   - WiFi ⚙ 
     - scanning ✔🍝
     - attaching positional information
-    - saving
+    - saving ⚙
     - loading
   - UWB
     - spatial consciousness
