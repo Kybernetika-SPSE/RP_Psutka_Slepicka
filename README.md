@@ -2,6 +2,6 @@
 ## TODO
 - scanning ✔🍝
 - attaching positional information
-- saving
+- saving ✔🍝
 - loading
 
