@@ -6,7 +6,7 @@
 - lacator (lokátor)
   - order components ✔
   - WiFi ⚙ 
-    - scanning ⚙
+    - scanning ✔🍝
     - attaching positional information
     - saving
     - loading
