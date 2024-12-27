@@ -6,7 +6,13 @@
 - lacator (lokátor)
   - order components ✔
   - WiFi
+    - scanning ✔
+    - attaching positional information
+    - saving
+    - loading
   - UWB
+    - spatial consciousness
+      - phone/VR headset app
   - Handheld
   - enclosure 
   - carmounted
