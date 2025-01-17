@@ -4,8 +4,12 @@
   - order components ✔
   - enclosure
 - lacator (lokátor)
+  - PCB
+    - schematic ⚙
+    - design
+    - order
   - order components ✔
-  - WiFi ⚙ 
+  - WiFi  
     - scanning ✔🍝
     - attaching positional information
     - saving ✔🍝
