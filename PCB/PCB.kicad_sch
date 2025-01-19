@@ -3396,7 +3396,7 @@
 	)
 	(no_connect
 		(at 191.77 35.56)
-		(uuid "5cc5a1ce-cfd3-4fc9-b2be-1febcda21c1c")
+		(uuid "8ecf4677-061f-4f65-bce6-116f4954fd96")
 	)
 	(no_connect
 		(at 76.2 149.86)
@@ -3521,6 +3521,16 @@
 			(type default)
 		)
 		(uuid "15e7e182-cfe2-48b6-91aa-c95b8dba3a90")
+	)
+	(wire
+		(pts
+			(xy 196.85 52.07) (xy 196.85 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "17c9c9c4-9ac8-42dd-8f3e-1d7e34f304c9")
 	)
 	(wire
 		(pts
@@ -3744,6 +3754,16 @@
 	)
 	(wire
 		(pts
+			(xy 196.85 40.64) (xy 191.77 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5eaf020b-a4f3-433a-b1ab-23f911642d5a")
+	)
+	(wire
+		(pts
 			(xy 72.39 35.56) (xy 82.55 35.56)
 		)
 		(stroke
@@ -3924,16 +3944,6 @@
 	)
 	(wire
 		(pts
-			(xy 196.85 40.64) (xy 196.85 52.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "aabceb9d-9976-4bbd-a9f0-4259fade8957")
-	)
-	(wire
-		(pts
 			(xy 229.87 82.55) (xy 240.03 82.55)
 		)
 		(stroke
@@ -4011,16 +4021,6 @@
 			(type default)
 		)
 		(uuid "d3623e1d-ca79-43f0-b810-5415bf62508e")
-	)
-	(wire
-		(pts
-			(xy 191.77 40.64) (xy 196.85 40.64)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e45e5f72-e1d2-4a3b-8dff-02f89d7788a3")
 	)
 	(wire
 		(pts
@@ -4380,7 +4380,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
 			(at 148.59 177.8 0)
 			(effects
 				(font
@@ -4524,7 +4524,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
 			(at 148.59 172.72 0)
 			(effects
 				(font
@@ -4990,7 +4990,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
 			(at 148.59 182.88 0)
 			(effects
 				(font
@@ -5807,7 +5807,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
 			(at 148.59 167.64 0)
 			(effects
 				(font
