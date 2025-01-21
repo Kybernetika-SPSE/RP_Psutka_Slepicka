@@ -5,9 +5,9 @@
   - enclosure
 - lacator (lokátor)
   - PCB
-    - schematic ⚙
-    - design
-    - order
+    - schematic ✔
+    - design ✔
+    - order ⚙
   - order components ✔
   - WiFi  
     - scanning ✔🍝
