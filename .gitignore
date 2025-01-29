@@ -2,3 +2,4 @@
 **/build
 **/scan/log.scan.*
 **/.devcontainer
+**/wifi-scan/logs
