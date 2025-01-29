@@ -2,4 +2,5 @@
 **/build
 **/scan/log.scan.*
 **/.devcontainer
-**/wifi-scan/logs
+**/wifi-scan/logs/*.log
+**/wifi-scan/places/*.csv

@@ -1,0 +1,1 @@
+This is where scans will be saved after `save_to_file.py` is runned.
