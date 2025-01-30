@@ -2,7 +2,7 @@ import os
 import re
 import csv
 
-alloved_SSIDs = ["pf-gosl"]
+alloved_SSIDs = ["pf-gosl", "eduroam"]
 
 #path to this files dir
 dir_path = os.path.dirname(os.path.realpath(__file__))
