@@ -7,6 +7,8 @@ For ESP32 UWB or ESP32 UWB Pro
 #include <SPI.h>
 #include "DW1000Ranging.h"
 
+#define TAG_ADD "7D:00:22:EA:82:60:3B:9C"
+
 #define SPI_MISO 12
 #define SPI_MOSI 13
 #define SPI_SCK 14
@@ -31,13 +33,13 @@ void setup()
     DW1000Ranging.initCommunication(PIN_RST, PIN_SS, PIN_IRQ); //Reset, CS, IRQ pin
     //define the sketch as anchor. It will be great to dynamically change the type of module
     DW1000Ranging.attachNewRange(newRange);
-    DW1000Ranging.attachNewDevice(newDevice);
+    DW1000Ranging.newBlinkattachNewDevice(newDevice);
     DW1000Ranging.attachInactiveDevice(inactiveDevice);
     //Enable the filter to smooth the distance
     //DW1000Ranging.useRangeFilter(true);
 
     //we start the module as a tag
-    DW1000Ranging.startAsTag("7D:00:22:EA:82:60:3B:9C", DW1000.MODE_LONGDATA_RANGE_LOWPOWER);
+    DW1000Ranging.startAsTag(TAG_ADD, DW1000.MODE_LONGDATA_RANGE_LOWPOWER);
 }
 
 void loop()
