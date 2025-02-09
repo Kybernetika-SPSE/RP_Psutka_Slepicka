@@ -1,13 +1,14 @@
 #include <WiFi.h>
 
-// Replace with your network credentials
-const char* ssid = "ssid";
-const char* password = "password";
 
 
 // Set LED GPIO
 const int ledPin = 2;
 String ledState = "OFF";
+
+//wifi ssid and password
+char* ssid;
+char* password;
 
 // Create WiFi server on port 80
 WiFiServer server(80);
@@ -21,24 +22,6 @@ void setup() {
     pinMode(ledPin, OUTPUT);
     digitalWrite(ledPin, LOW);
 
-    //wifi_scan();
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();  // Ensure no active connections
-
-    // Connect to WiFi
-    Serial.print("Connecting to ");
-    Serial.println(ssid);
-    WiFi.begin(ssid, password);
-
-
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        Serial.print(".");
-    }
-    
-    Serial.println("\nWiFi connected!");
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
     ledState = "ON";
     digitalWrite(ledPin, HIGH);
 
@@ -121,21 +104,65 @@ void loop() {
 void wifi_scan() {
     Serial.println("Scanning for Wi-Fi networks...");
 
-    // Start Wi-Fi in station mode (to scan networks)
-    WiFi.mode(WIFI_STA);
-    //WiFi.disconnect();  // Ensure no active connections
-    delay(100);
+    // WiFi.scanNetworks will return the number of networks found
+    int n = WiFi.scanNetworks();
 
-    int numNetworks = WiFi.scanNetworks(); // Scan for Wi-Fi networks
-
-    if (numNetworks == 0) {
-        Serial.println("No Wi-Fi networks found.");
+    if (n == 0) {
+        Serial.println("no networks found");
     } else {
-        Serial.println("Available Wi-Fi networks:");
-        for (int i = 0; i < numNetworks; i++) {
-            Serial.printf("%d: %s (Signal Strength: %d dBm) %s\n",
-                          i + 1, WiFi.SSID(i).c_str(), WiFi.RSSI(i),
-                          WiFi.encryptionType(i) == WIFI_AUTH_OPEN ? "[Open]" : "[Secured]");
+        for (int i = 0; i < n; ++i) {
+            // Print BSSID, RSSI and SSID for each network found
+            Serial.printf("%02x:%02x:%02x:%02x:%02x:%02x", WiFi.BSSID(i)[0], WiFi.BSSID(i)[1], WiFi.BSSID(i)[2], 
+                                                            WiFi.BSSID(i)[3], WiFi.BSSID(i)[4], WiFi.BSSID(i)[5]);
+            Serial.print(" - ");
+            Serial.print(-WiFi.RSSI(i));
+            Serial.print(" - ");
+            Serial.print(WiFi.SSID(i));
+            Serial.print("\n");
         }
     }
+    Serial.println("");   
+}
+
+void wifi_connect() {
+    //setting up wifi
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();  // Ensure no active connections
+    
+    // finds available network
+    Serial.println("Scanning for Wi-Fi networks...");
+    int n = WiFi.scanNetworks();
+    if (n == 0) {
+        Serial.println("no networks found");
+        return;
+    } else {
+        for (int i = 0; i < n; ++i) {
+            // Print BSSID, RSSI and SSID for each network found
+            Serial.print(-WiFi.RSSI(i));
+            Serial.print(" - ");
+            Serial.print(WiFi.SSID(i));
+            Serial.print("\n");
+
+            
+        }
+    }
+
+
+
+    
+
+    // Connect to WiFi
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+    WiFi.begin(ssid, password);
+
+
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.print(".");
+    }
+    
+    Serial.println("\nWiFi connected!");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
 }
