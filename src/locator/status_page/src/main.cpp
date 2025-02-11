@@ -25,6 +25,13 @@ void setup() {
     ledState = "ON";
     digitalWrite(ledPin, HIGH);
 
+    // Set the ESP32 to SoftAP mode
+    WiFi.softAP("ESP32-SoftAP", "123456789");
+
+    Serial.println("SoftAP Started");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.softAPIP());
+
     server.begin();
 }
 
@@ -121,48 +128,5 @@ void wifi_scan() {
             Serial.print("\n");
         }
     }
-    Serial.println("");   
 }
 
-void wifi_connect() {
-    //setting up wifi
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();  // Ensure no active connections
-    
-    // finds available network
-    Serial.println("Scanning for Wi-Fi networks...");
-    int n = WiFi.scanNetworks();
-    if (n == 0) {
-        Serial.println("no networks found");
-        return;
-    } else {
-        for (int i = 0; i < n; ++i) {
-            // Print BSSID, RSSI and SSID for each network found
-            Serial.print(-WiFi.RSSI(i));
-            Serial.print(" - ");
-            Serial.print(WiFi.SSID(i));
-            Serial.print("\n");
-
-            
-        }
-    }
-
-
-
-    
-
-    // Connect to WiFi
-    Serial.print("Connecting to ");
-    Serial.println(ssid);
-    WiFi.begin(ssid, password);
-
-
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        Serial.print(".");
-    }
-    
-    Serial.println("\nWiFi connected!");
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
-}
