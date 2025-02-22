@@ -1,54 +1,52 @@
-/*
- *  This sketch demonstrates how to scan WiFi networks.
- *  The API is almost the same as with the WiFi Shield library,
- *  the most obvious difference being the different file you need to include:
- */
 #include "WiFi.h"
 
-int scan_number = 0;
+const int onboardledPin = 2;
 
+// Function to scan for available Wi-Fi networks
+void scanNetworks()
+{
+    int n = WiFi.scanNetworks();
+    Serial.print("["); // Start JSON array
+    for (int i = 0; i < n; i++)
+    {
+        Serial.printf("{\"bssid\":\"%s\", \"ssid\":\"%s\", \"rssi\":%d}%s",
+                      WiFi.BSSIDstr(i).c_str(), WiFi.SSID(i), WiFi.RSSI(i), (i < n - 1) ? "," : "");
+    }
+    Serial.println("]"); // End JSON array
+}
 
 
 void setup()
 {
-    Serial.begin(115200);
+    Serial.begin(115200); // Open Serial connection
+    WiFi.mode(WIFI_STA);  // Set Wi-Fi to station mode
 
-    // Set WiFi to station mode and disconnect from an AP if it was previously connected
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-    delay(100);
-
-    Serial.println("Setup done");
+    pinMode(onboardledPin, OUTPUT); // Set onboard LED pin as output
+    for (size_t i = 0; i < 3; i++)
+    {
+        digitalWrite(onboardledPin, HIGH);
+        delay(10);
+        digitalWrite(onboardledPin, LOW);
+        delay(30);
+    }
+    
+   
 }
+
 
 void loop()
 {
+    if (Serial.available())
+    {
+        String amount = Serial.readStringUntil('\n'); // Read amount from Python
+        amount.trim();                                // Remove any extra whitespace
 
-
-    // WiFi.scanNetworks will return the number of networks found
-    int n = WiFi.scanNetworks();
-
-    Serial.print("scan number: ");
-    Serial.println(scan_number);
-    scan_number += 1;
-
-    if (n == 0) {
-        Serial.println("no networks found");
-    } else {
-        //Serial.print(n);
-        //Serial.println(" networks found");
-        for (int i = 0; i < n; ++i) {
-            // Print BSSID, RSSI and SSID for each network found
-            Serial.printf("%02x:%02x:%02x:%02x:%02x:%02x", WiFi.BSSID(i)[0], WiFi.BSSID(i)[1], WiFi.BSSID(i)[2], 
-                                                            WiFi.BSSID(i)[3], WiFi.BSSID(i)[4], WiFi.BSSID(i)[5]);
-            Serial.print(" - ");
-            Serial.print(-WiFi.RSSI(i));
-            Serial.print(" - ");
-            Serial.print(WiFi.SSID(i));
-            Serial.print("\n");
+        for (int i = 0; i < amount.toInt(); i++)
+        {
+            digitalWrite(onboardledPin, HIGH); // Turn onboard LED on
+            scanNetworks(); // Scan for Wi-Fi networks
+            digitalWrite(onboardledPin, LOW); // Turn onboard LED off
+            delay(50);
         }
     }
-    Serial.println("");
-
-    // Wait a bit before scanning again
 }
