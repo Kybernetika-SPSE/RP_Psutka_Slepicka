@@ -1,9 +1,10 @@
 import serial
 import json
 
+# amount of scans performed per location
 amount = 3
 
-
+# Parse JSON file into Python object (list of dictionaries)
 with open("networks_raw.json") as f:
     try:
         networks = json.load(f)
@@ -16,15 +17,18 @@ with open("networks_raw.json") as f:
 # Open serial port
 ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=10) 
 
+# Send command to ESP32
 def send_command(command):
-    ser.write((command + "\n").encode())  # Send command
+    ser.write((command + "\n").encode())  
 
 
+# Read response from ESP32
 def read_response():
-    response = ser.readline().decode().strip()  # Read one line
+    response = ser.readline().decode().strip()
     return response
 
 
+# Scan for networks and store in Python object
 def scan():
     send_command(f"{amount}")  # Tell ESP32 to scan
     
@@ -33,13 +37,14 @@ def scan():
             
         # Read JSON response
         raw_data = read_response()
-        print(f"Received: {raw_data}")
         try:
             wifi_data = json.loads(raw_data)  # Convert JSON to Python list
         except json.JSONDecodeError:
+            print(f"Received: {raw_data}")
             print("Error: Could not parse JSON from ESP32.")
             return
 
+        # Store networks in Python object
         networks.append({
             "location": location,
             "name": name,
@@ -60,7 +65,7 @@ with open("networks_raw.json", "w") as f:
     while True:
         name = input("Enter name: ")
         #location = input("Enter location: ")
-        location = "test"
+        location = "placeholder" # Placeholder for location
         if name == "exit":
             break
 
@@ -71,15 +76,9 @@ with open("networks_raw.json", "w") as f:
             continue
 
         print(f"name: {name}")
-        print("=====================================")
-        print(networks)
-        print("=====================================")
 
+        # Scan for networks
         scan()
-
-        print("=====================================")
-        print(networks)
-        print("=====================================")
 
         #write to file
         json.dump(networks, f, indent=4)
@@ -87,4 +86,3 @@ with open("networks_raw.json", "w") as f:
         print("Scanning complete.")
         print("Type 'exit' to quit.")
         print()
-
