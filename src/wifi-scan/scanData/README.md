@@ -7,6 +7,15 @@ Tato složka obsahuje data skenování shromážděná nástrojem pro skenován�
 - `networks_raw.json`: Obsahuje surová data o sítích ve formátu JSON.
 - `networks.json`: Obsahuje zpracovaná data o sítích ve formátu JSON.
 
+## Použití
+
+1. Připojte ESP32 k počítači.
+2. Spusťte `scan.py` pro inicializaci skenování.
+3. Zadejte název a lokaci pro každé skenování.
+4. Data budou uložena do `networks_raw.json`.
+5. Spusťte `format.py` pro formátování dat do `networks.json`.
+
+
 ## Struktura souborů
 
 ### networks_raw.json
@@ -45,15 +54,6 @@ Tato složka obsahuje data skenování shromážděná nástrojem pro skenován�
     }
 }
 ```
-
-## Použití
-
-1. Spusťte ESP.
-2. Spusťte `scan.py`.
-3. Oskenujte libovolný počet lokací (u každé určíte vaši lokaci a název místa).
-4. Ověřte, že vše proběhlo v pořádku v `networks_raw.json`.
-5. Spusťte `format.py`.
-6. Vezměte si svůj naformátovaný soubor `networks.json`.
 
 ## Poznámky
 

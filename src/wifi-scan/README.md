@@ -1,27 +1,26 @@
-How to build PlatformIO based project
-=====================================
+# Funkce wifi-scan
 
-1. [Install PlatformIO Core](https://docs.platformio.org/page/core.html)
-2. Download [development platform with examples](https://github.com/platformio/platform-espressif32/archive/develop.zip)
-3. Extract ZIP archive
-4. Run these commands:
+Tento projekt poskytuje nástroje pro skenování dostupných WiFi sítí pomocí ESP32 a jejich následné zpracování.
 
-```shell
-# Change directory to example
-$ cd platform-espressif32/examples/arduino-wifiscan
+## Použití
 
-# Build project
-$ pio run
+1. Připojte ESP32 k počítači.
+2. Spusťte `scan.py` pro inicializaci skenování.
+3. Zadejte název a lokaci pro každé skenování.
+4. Data budou uložena do `scanData/networks_raw.json`.
+5. Spusťte `format.py` pro formátování dat do `scanData/networks.json`.
 
-# Upload firmware
-$ pio run --target upload
+## Struktura souborů
 
-# Build specific environment
-$ pio run -e quantum
+- `scan.py`: Skript pro skenování WiFi sítí a ukládání dat.
+- `format.py`: Skript pro formátování naskenovaných dat.
+- `scanData/`: Složka obsahující naskenovaná data.
+- `src/`: Zdrojové kódy pro ESP32.
 
-# Upload firmware for the specific environment
-$ pio run -e quantum --target upload
+## Poznámky
 
-# Clean build files
-$ pio run --target clean
-```
+- Tento projekt vyžaduje knihovnu `pyserial` pro komunikaci s ESP32. Nainstalujte ji pomocí `pip install pyserial`.
+- Ujistěte se, že ESP32 má potřebná oprávnění pro přístup k sériovému portu.
+- Pravidelně zálohujte data skenování, abyste předešli jejich ztrátě.
+
+Pro více informací se odkažte na hlavní dokumentaci projektu.
