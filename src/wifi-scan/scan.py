@@ -5,7 +5,7 @@ import json
 amount = 3
 
 # Parse JSON file into Python object (list of dictionaries)
-with open("networks_raw.json") as f:
+with open("scanData/networks_raw.json") as f:
     try:
         networks = json.load(f)
     except json.JSONDecodeError as e:
@@ -61,7 +61,7 @@ def scan():
 
 
 # Main loop
-with open("networks_raw.json", "w") as f:
+with open("scanData/networks_raw.json", "w") as f:
     while True:
         name = input("Enter name: ")
         #location = input("Enter location: ")

@@ -1,7 +1,7 @@
 import json
 
 # read raw data
-with open('networks_raw.json') as f:
+with open('scanData/networks_raw.json') as f:
     data_raw = json.load(f)
 
 data = {}
@@ -35,5 +35,5 @@ for name in data:
 
 
 # save formatted data
-with open('networks.json', 'w') as f:
+with open('scanData/networks.json', 'w') as f:
     json.dump(data, f, indent=4)
