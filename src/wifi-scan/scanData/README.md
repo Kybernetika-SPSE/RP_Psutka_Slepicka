@@ -1,6 +1,6 @@
 # Složka s daty skenování
 
-Tato složka obsahuje data skenování shromážděná nástrojem pro skenování WiFi. Datové soubory v tomto adresáři jsou generovány během procesu skenování a jsou používány pro analýzu a vytváření zpráv.
+Tato složka obsahuje data naskenovaných WiFi sítí. Data jsou ukládána ve formátu JSON a jsou rozdělena na surová data a zpracovaná data. Surová data jsou uložena v souboru `networks_raw.json` a obsahují podrobné informace o každé nalezené síti. Zpracovaná data jsou uložena v souboru `networks.json` a obsahují agregované informace o síťových signálech.
 
 ## Obsah
 
