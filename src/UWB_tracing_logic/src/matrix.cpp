@@ -177,21 +177,56 @@ Matrix Matrix::transpose() const
 }
 
 // Inverse
-Matrix Matrix::inverse() const
-{
-    int rows = matrix.size();
-    int cols = matrix[0].size();
+Matrix Matrix::inverse() const {
+    int n = matrix.size();
 
+    // Check if the matrix is square
+    if (n != matrix[0].size()) {
+        Serial.println("Error: Matrix must be square to compute inverse.");
+        return *this; // Return original matrix as a fallback
+    }
 
+    // Create an augmented matrix [A | I]
+    Matrix augmented(n, n * 2);
+    for (int y = 0; y < n; ++y) {
+        for (int x = 0; x < n; ++x) {
+            augmented[y][x] = matrix[y][x]; // Copy original matrix
+        }
+        augmented[y][n + y] = 1.0; // Identity matrix on the right
+    }
 
-    Matrix result(cols, rows);
+    // Perform row operations to transform [A | I] -> [I | A^-1]
+    for (int i = 0; i < n; ++i) {
+        // Find the pivot row
+        float pivot = augmented[i][i];
+        if (pivot == 0.0) {
+            Serial.println("Error: Singular matrix (non-invertible).");
+            return *this; // Return original matrix as a fallback
+        }
 
-    for (int y = 0; y < rows; ++y)
-    {
-        for (int x = 0; x < cols; ++x)
-        {
-            result.matrix[y][x] = matrix[y][x] - other.matrix[y][x];
+        // Normalize pivot row
+        for (int j = 0; j < 2 * n; ++j) {
+            augmented[i][j] /= pivot;
+        }
+
+        // Eliminate all other entries in column
+        for (int k = 0; k < n; ++k) {
+            if (k != i) {
+                float factor = augmented[k][i];
+                for (int j = 0; j < 2 * n; ++j) {
+                    augmented[k][j] -= factor * augmented[i][j];
+                }
+            }
         }
     }
-    return result;
+
+    // Extract the inverse matrix from the augmented matrix
+    Matrix inverse(n, n);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            inverse[i][j] = augmented[i][n + j]; // Copy the right half
+        }
+    }
+
+    return inverse;
 }
