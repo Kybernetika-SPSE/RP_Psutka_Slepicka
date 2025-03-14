@@ -56,5 +56,5 @@ void KalmanFilter::update(const std::vector<float> &measurement) {
 }
 
 std::vector<float> KalmanFilter::getState() {
-    return {X[0][0], X[0][1], X[0][2]} // Return position (x, y, z)
+    return {X[0][0], X[0][1], X[0][2]}; // Return position (x, y, z)
 }
