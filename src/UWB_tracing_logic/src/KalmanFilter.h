@@ -9,6 +9,7 @@ public:
     KalmanFilter();
     void predict(float dt);
     void update(const std::vector<float> &measurement);
+    void adjustKalmanNoise();
     std::vector<float> getState();
 
 private:
@@ -19,7 +20,7 @@ private:
     Matrix H;  // Measurement matrix
     Matrix R;  // Measurement noise covariance
     Matrix I;  // Identity matrix
-    
+    float currentQScale; // Scale for Q matrix
 };
 
 #endif

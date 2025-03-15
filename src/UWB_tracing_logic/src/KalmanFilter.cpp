@@ -12,16 +12,13 @@ KalmanFilter::KalmanFilter()
 {
     F.set_identity();
 
-    P.set_identity();
-    P *= 10;
+    P.set_identity(10);
 
     Q.set_identity();
-    Q *= 0.1;
 
     H.set_identity();
 
-    R.set_identity();
-    R *= 1;
+    R.set_identity(1);
 
     I.set_identity();
 }
@@ -57,4 +54,16 @@ void KalmanFilter::update(const std::vector<float> &measurement) {
 
 std::vector<float> KalmanFilter::getState() {
     return {X[0][0], X[0][1], X[0][2]}; // Return position (x, y, z)
+}
+
+void KalmanFilter::adjustKalmanNoise() {
+    static const float Q_MIN = 0.5f;   // Minimum process noise (stationary)
+    static const float Q_MAX = 20.0f;  // Maximum process noise (fast movement)
+    static const float SCALE_FACTOR = 10.0f;
+
+    float speed = sqrt(pow(X[0][3], 2) + pow(X[0][4], 2) + pow(X[0][5], 2));
+
+    currentQScale = Q_MIN + (Q_MAX - Q_MIN) * (speed / SCALE_FACTOR);
+
+    Q.set_identity(currentQScale);
 }
