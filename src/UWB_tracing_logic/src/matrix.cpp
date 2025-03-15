@@ -135,7 +135,7 @@ void Matrix::set_value(float val)
 }
 
 // Set the matrix to identity
-void Matrix::set_identity(int size, int y, int x)
+void Matrix::set_identity(float scale, int size, int y, int x)
 {
     int rows = matrix.size() - y;
     int cols = matrix[0].size() - x;
@@ -154,7 +154,7 @@ void Matrix::set_identity(int size, int y, int x)
     set_value(0);
     for (size_t i = 0; i < size; i++)
     {
-        matrix[i + y][i + x] = 1;
+        matrix[i + y][i + x] = scale;
     }
 }
 

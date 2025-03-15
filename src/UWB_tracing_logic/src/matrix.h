@@ -35,7 +35,7 @@ public:
     void set_value(float val);
 
     // Set the matrix to identity
-    void set_identity(int size = 0, int y = 0, int x = 0);
+    void set_identity(float scale = 1, int size = 0, int y = 0, int x = 0);
 
     // Transpose
     Matrix transpose() const;
