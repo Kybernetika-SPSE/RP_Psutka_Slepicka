@@ -183,7 +183,7 @@ Matrix Matrix::inverse() const {
     // Check if the matrix is square
     if (n != matrix[0].size()) {
         Serial.println("Error: Matrix must be square to compute inverse.");
-        return *this; // Return original matrix as a fallback
+        return Matrix(0, 0); // Return original matrix as a fallback
     }
 
     // Create an augmented matrix [A | I]
@@ -201,7 +201,7 @@ Matrix Matrix::inverse() const {
         float pivot = augmented[i][i];
         if (pivot == 0.0) {
             Serial.println("Error: Singular matrix (non-invertible).");
-            return *this; // Return original matrix as a fallback
+            return Matrix(0, 0); // Return original matrix as a fallback
         }
 
         // Normalize pivot row
