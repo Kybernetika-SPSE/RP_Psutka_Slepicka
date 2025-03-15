@@ -232,7 +232,7 @@ Matrix Matrix::inverse() const {
 }
 
 // QR decomposition
-std::pair<Matrix, Matrix> Matrix::qrDecomposition() {
+std::pair<Matrix, Matrix> Matrix::qrDecomposition() const{
     // Initialize Q and R matrices
     Matrix Q(matrix.size(), matrix[0].size()); // Orthogonal matrix
     Matrix R(matrix[0].size(), matrix[0].size()); // Upper triangular matrix

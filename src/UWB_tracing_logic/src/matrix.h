@@ -44,7 +44,8 @@ public:
     Matrix inverse() const;
 
     // QR Decomposition Function
-    std::pair<Matrix, Matrix> Matrix::qrDecomposition();
+    std::pair<Matrix, Matrix> qrDecomposition() const;
+
 };
 
 #endif
