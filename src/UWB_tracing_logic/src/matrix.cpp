@@ -230,3 +230,44 @@ Matrix Matrix::inverse() const {
 
     return inverse;
 }
+
+// QR decomposition
+std::pair<Matrix, Matrix> Matrix::qrDecomposition() {
+    // Initialize Q and R matrices
+    Matrix Q(matrix.size(), matrix[0].size()); // Orthogonal matrix
+    Matrix R(matrix[0].size(), matrix[0].size()); // Upper triangular matrix
+
+    // Perform Gram-Schmidt
+    for (int j = 0; j < matrix[0].size(); ++j) {
+        // Step 1: Calculate the j-th column of Q
+        std::vector<float> v(matrix.size());
+        for (int i = 0; i < matrix.size(); ++i) {
+            v[i] = matrix[i][j];  // Column vector from A
+        }
+
+        for (int k = 0; k < j; ++k) {
+            float dot = 0;
+            for (int i = 0; i < matrix.size(); ++i) {
+                dot += Q[i][k] * matrix[i][j];
+            }
+            R[k][j] = dot;
+            for (int i = 0; i < matrix.size(); ++i) {
+                v[i] -= dot * Q[i][k];  // Subtract projection
+            }
+        }
+
+        // Normalize the vector and store in Q
+        float norm = 0;
+        for (int i = 0; i < matrix.size(); ++i) {
+            norm += v[i] * v[i];
+        }
+        norm = sqrt(norm);
+
+        R[j][j] = norm;
+        for (int i = 0; i < matrix.size(); ++i) {
+            Q[i][j] = v[i] / norm;
+        }
+    }
+
+    return {Q, R};  // Return Q and R matrices
+}
