@@ -1,6 +1,9 @@
 #include "WiFi.h"
 
 const int onboardledPin = 2;
+const int ledOnDuration = 10;
+const int ledOffDuration = 30;
+const int scanDelay = 50;
 
 // Function to scan for available Wi-Fi networks
 void scanNetworks()
@@ -15,6 +18,29 @@ void scanNetworks()
     Serial.println("]"); // End JSON array
 }
 
+// Function to blink the onboard LED
+void blinkLED(int times, int onDuration, int offDuration)
+{
+    for (int i = 0; i < times; i++)
+    {
+        digitalWrite(onboardledPin, HIGH);
+        delay(onDuration);
+        digitalWrite(onboardledPin, LOW);
+        delay(offDuration);
+    }
+}
+
+// Function to handle scanning process
+void handleScanning(int amount)
+{
+    for (int i = 0; i < amount; i++)
+    {
+        digitalWrite(onboardledPin, HIGH); // Turn onboard LED on
+        scanNetworks(); // Scan for Wi-Fi networks
+        digitalWrite(onboardledPin, LOW); // Turn onboard LED off
+        delay(scanDelay);
+    }
+}
 
 void setup()
 {
@@ -22,31 +48,17 @@ void setup()
     WiFi.mode(WIFI_STA);  // Set Wi-Fi to station mode
 
     pinMode(onboardledPin, OUTPUT); // Set onboard LED pin as output
-    for (size_t i = 0; i < 3; i++)
-    {
-        digitalWrite(onboardledPin, HIGH);
-        delay(10);
-        digitalWrite(onboardledPin, LOW);
-        delay(30);
-    }
-    
-   
+    blinkLED(3, ledOnDuration, ledOffDuration); // Blink LED 3 times at successfull startup
 }
-
 
 void loop()
 {
     if (Serial.available())
     {
-        String amount = Serial.readStringUntil('\n'); // Read amount from Python
-        amount.trim();                                // Remove any extra whitespace
+        String amountStr = Serial.readStringUntil('\n'); // Read amount from Python
+        amountStr.trim();                                // Remove any extra whitespace
+        int amount = amountStr.toInt();                  // Convert to integer
 
-        for (int i = 0; i < amount.toInt(); i++)
-        {
-            digitalWrite(onboardledPin, HIGH); // Turn onboard LED on
-            scanNetworks(); // Scan for Wi-Fi networks
-            digitalWrite(onboardledPin, LOW); // Turn onboard LED off
-            delay(50);
-        }
+        handleScanning(amount); // Handle the scanning process
     }
 }
