@@ -5,6 +5,6 @@
 #include "matrix.h"
 
 // Solve the Least Squares using QR Decomposition
-std::vector<float> solveLeastSquares(const Matrix& A, const std::vector<float>& b);
+Matrix solveLeastSquares(const Matrix& A, const Matrix& b);
 
 #endif

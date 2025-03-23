@@ -21,14 +21,15 @@ Matrix Matrix::operator*(const Matrix &other) const
 
     int row = matrix.size();
     int col = other.matrix[0].size();
+    int innerDim = matrix[0].size();
 
-    Matrix result(col, row);
+    Matrix result(row, col);
 
     for (int i = 0; i < row; ++i)
     {
         for (int j = 0; j < col; ++j)
         {
-            for (int k = 0; k < matrix[0].size(); ++k)
+            for (int k = 0; k < innerDim; ++k)
             {
                 result.matrix[i][j] += matrix[i][k] * other.matrix[k][j];
             }
@@ -232,42 +233,71 @@ Matrix Matrix::inverse() const {
 }
 
 // QR decomposition
-std::pair<Matrix, Matrix> Matrix::qrDecomposition() const{
-    // Initialize Q and R matrices
-    Matrix Q(matrix.size(), matrix[0].size()); // Orthogonal matrix
-    Matrix R(matrix[0].size(), matrix[0].size()); // Upper triangular matrix
+std::pair<Matrix, Matrix> Matrix::qrDecomposition() const {
+    int rows = matrix.size();
+    int cols = matrix[0].size();
+
+    Serial.println("Starting QR decomposition...");
+    
+    // Initialize correct sizes
+    Matrix Q(rows, cols); // Should be rows x cols
+    Matrix R(cols, cols); // Should be cols x cols
 
     // Perform Gram-Schmidt
-    for (int j = 0; j < matrix[0].size(); ++j) {
-        // Step 1: Calculate the j-th column of Q
-        std::vector<float> v(matrix.size());
-        for (int i = 0; i < matrix.size(); ++i) {
-            v[i] = matrix[i][j];  // Column vector from A
-        }
+    for (int j = 0; j < cols; ++j) {
+        Serial.print("Processing column ");
+        Serial.println(j);
 
+        // Step 1: Extract j-th column of A
+        std::vector<float> v(rows);
+        for (int i = 0; i < rows; ++i) {
+            v[i] = matrix[i][j];  
+        }
+        
+        Serial.print("Initial column v: ");
+        for (float val : v) Serial.print(val), Serial.print(" ");
+        Serial.println();
+
+        // Step 2: Orthogonalization
         for (int k = 0; k < j; ++k) {
             float dot = 0;
-            for (int i = 0; i < matrix.size(); ++i) {
+            for (int i = 0; i < rows; ++i) {
                 dot += Q[i][k] * matrix[i][j];
             }
             R[k][j] = dot;
-            for (int i = 0; i < matrix.size(); ++i) {
-                v[i] -= dot * Q[i][k];  // Subtract projection
+            for (int i = 0; i < rows; ++i) {
+                v[i] -= dot * Q[i][k];  
             }
+            Serial.print("Projection on Q[:, ");
+            Serial.print(k);
+            Serial.print("]: ");
+            Serial.println(dot);
         }
 
-        // Normalize the vector and store in Q
+        // Step 3: Normalize
         float norm = 0;
-        for (int i = 0; i < matrix.size(); ++i) {
+        for (int i = 0; i < rows; ++i) {
             norm += v[i] * v[i];
         }
         norm = sqrt(norm);
 
+        if (norm == 0) {
+            Serial.println("Error: Zero norm encountered during QR decomposition.");
+            return {Matrix(0, 0), Matrix(0, 0)};
+        }
+
         R[j][j] = norm;
-        for (int i = 0; i < matrix.size(); ++i) {
+        for (int i = 0; i < rows; ++i) {
             Q[i][j] = v[i] / norm;
         }
+
+        Serial.print("Normalized Q[:, ");
+        Serial.print(j);
+        Serial.print("]: ");
+        for (int i = 0; i < rows; ++i) Serial.print(Q[i][j]), Serial.print(" ");
+        Serial.println();
     }
 
-    return {Q, R};  // Return Q and R matrices
+    Serial.println("QR decomposition completed!");
+    return {Q, R};
 }
