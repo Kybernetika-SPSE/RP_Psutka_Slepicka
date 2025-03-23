@@ -1,24 +1,31 @@
 #include "leastSquare.h"
 
+/**
+ * @brief Solve the Least Squares using QR Decomposition
+ *
+ * @param A The matrix A
+ * @param b The matrix b
+ * @return Matrix The solution x
+ */
 Matrix solveLeastSquares(const Matrix &A, const Matrix &b)
 {
     int rows = A.matrix.size();
     int cols = A.matrix[0].size();
 
-    Matrix Q(rows, cols);
-    Matrix R(cols, cols);
-    std::pair<Matrix, Matrix> qr_result = A.qrDecomposition();
-    Q = qr_result.first;
-    R = qr_result.second;
+    // Perform QR decomposition
+    std::pair<Matrix, Matrix> qrResult = A.qrDecomposition();
+    Matrix Q = qrResult.first;
+    Matrix R = qrResult.second;
 
+    // Compute Q^T * b
     Matrix Qt = Q.transpose();
-
     Matrix Qtb = Qt * b;
 
-    Matrix x(Qtb.matrix.size(), 1);
+    // Initialize the solution vector x
+    Matrix x(cols, 1);
 
-    // Back-substitution
-    for (int i = Qtb.matrix.size() - 1; i >= 0; --i)
+    // Back-substitution to solve R * x = Q^T * b
+    for (int i = cols - 1; i >= 0; --i)
     {
         if (R.matrix[i][i] == 0.0)
         {
@@ -27,7 +34,7 @@ Matrix solveLeastSquares(const Matrix &A, const Matrix &b)
         }
 
         float sum = 0.0;
-        for (int j = i + 1; j < Qtb.matrix.size(); ++j)
+        for (int j = i + 1; j < cols; ++j)
         {
             sum += R.matrix[i][j] * x[j][0];
         }

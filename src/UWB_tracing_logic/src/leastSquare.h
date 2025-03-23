@@ -4,7 +4,6 @@
 #include <vector>
 #include "matrix.h"
 
-// Solve the Least Squares using QR Decomposition
-Matrix solveLeastSquares(const Matrix& A, const Matrix& b);
+Matrix solveLeastSquares(const Matrix &A, const Matrix &b);
 
-#endif
+#endif // LEASTSQUARE_H
