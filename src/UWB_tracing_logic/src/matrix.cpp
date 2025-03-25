@@ -311,8 +311,6 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
     int rows = matrix.size();
     int cols = matrix[0].size();
 
-    Serial.println("Starting QR decomposition...");
-
     // Initialize correct sizes
     Matrix Q(rows, cols);
     Matrix R(cols, cols);
@@ -320,8 +318,6 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
     // Perform Gram-Schmidt
     for (int j = 0; j < cols; ++j)
     {
-        Serial.print("Processing column ");
-        Serial.println(j);
 
         // Step 1: Extract j-th column of A
         std::vector<float> v(rows);
@@ -329,11 +325,6 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
         {
             v[i] = matrix[i][j];
         }
-
-        Serial.print("Initial column v: ");
-        for (float val : v)
-            Serial.print(val), Serial.print(" ");
-        Serial.println();
 
         // Step 2: Orthogonalization
         for (int k = 0; k < j; ++k)
@@ -348,10 +339,6 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
             {
                 v[i] -= dot * Q[i][k];
             }
-            Serial.print("Projection on Q[:, ");
-            Serial.print(k);
-            Serial.print("]: ");
-            Serial.println(dot);
         }
 
         // Step 3: Normalize
@@ -373,15 +360,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
         {
             Q[i][j] = v[i] / norm;
         }
-
-        Serial.print("Normalized Q[:, ");
-        Serial.print(j);
-        Serial.print("]: ");
-        for (int i = 0; i < rows; ++i)
-            Serial.print(Q[i][j]), Serial.print(" ");
-        Serial.println();
     }
 
-    Serial.println("QR decomposition completed!");
     return {Q, R};
 }
