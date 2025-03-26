@@ -231,11 +231,11 @@ Matrix Matrix::transpose() const
 }
 
 /**
- * @brief Compute the inverse of the matrix
+ * @brief Compute the inverse of the matrix using Gauss-Jordan elimination
  *
  * @return Matrix The inverse of the matrix
  */
-Matrix Matrix::inverse() const
+Matrix Matrix::gaussJordanInverse() const
 {
     int n = matrix.size();
 
@@ -363,4 +363,60 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
     }
 
     return {Q, R};
+}
+
+
+
+/**
+ * @brief Compute the inverse of the matrix using QR decomposition
+ *
+ * @return Matrix The inverse of the matrix
+ */
+Matrix Matrix::inverseQR() const
+{
+    int rows = matrix.size();
+    int cols = matrix[0].size();
+
+    if (rows != cols)
+    {
+        Serial.println("Error: Matrix must be square to compute inverse.");
+        return Matrix(0, 0);
+    }
+
+    // Perform QR decomposition
+    std::pair<Matrix, Matrix> qrResult = qrDecomposition();
+    Matrix Q = qrResult.first;
+    Matrix R = qrResult.second;
+
+    // Initialize inverse matrix
+    Matrix inverse(rows, cols);
+
+    // Solve R * X = Q^T * I (column-wise)
+    Matrix Qt = Q.transpose();
+    for (int j = 0; j < cols; ++j)
+    {
+        Matrix e(rows, 1);
+        e[j][0] = 1.0; // Column of identity matrix
+
+        Matrix b = Qt * e; // Compute Q^T * e_j
+
+        // Back-substitution to solve R * x = b
+        for (int i = cols - 1; i >= 0; --i)
+        {
+            if (R.matrix[i][i] == 0.0)
+            {
+                Serial.println("Error: Singular matrix in upper triangular solve.");
+                return Matrix(0, 0);
+            }
+
+            float sum = 0.0;
+            for (int k = i + 1; k < cols; ++k)
+            {
+                sum += R.matrix[i][k] * inverse[k][j];
+            }
+            inverse[i][j] = (b[i][0] - sum) / R.matrix[i][i];
+        }
+    }
+
+    return inverse;
 }

@@ -48,7 +48,7 @@ void KalmanFilter::update(const Matrix &measurement)
 {
     Matrix Y = measurement - (H * X);           // Measurement residual
     Matrix S = H * P * H.transpose() + R;       // Residual covariance
-    Matrix K = P * H.transpose() * S.inverse(); // Kalman gain
+    Matrix K = P * H.transpose() * S.inverseQR(); // Kalman gain
 
     // Update state
     X = X + K * Y;

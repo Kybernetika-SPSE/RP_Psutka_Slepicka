@@ -20,8 +20,9 @@ public:
     void set_value(float val);
     void set_identity(float scale = 1, int size = 0, int y = 0, int x = 0);
     Matrix transpose() const;
-    Matrix inverse() const;
+    Matrix gaussJordanInverse() const;
     std::pair<Matrix, Matrix> qrDecomposition() const;
+    Matrix inverseQR() const;
 };
 
 #endif // MATRIX_H
