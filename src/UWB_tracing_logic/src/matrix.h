@@ -20,6 +20,7 @@ public:
     Matrix operator-(const Matrix &other) const;
     void print() const;
     void set_value(float val);
+    Matrix getColumn(int colIndex) const;
     void set_identity(float scale = 1, int size = 0, int y = 0, int x = 0);
     Matrix transpose() const;
     Matrix gaussJordanInverse() const;

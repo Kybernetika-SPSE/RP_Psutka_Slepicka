@@ -193,6 +193,24 @@ void Matrix::set_value(float val)
 }
 
 /**
+ * @brief Get a column from the matrix
+ *
+ * @param colIndex The index of the column to get
+ * @return Matrix The column vector
+ */
+Matrix Matrix::getColumn(int colIndex) const
+{
+    Matrix columnVector(rows(), 1); // Create a column vector (rows x 1)
+
+    for (int i = 0; i < rows(); ++i)
+    {
+        columnVector[i][0] = this->matrix[i][colIndex]; // Copy column values
+    }
+
+    return columnVector;
+}
+
+/**
  * @brief Set the matrix to identity
  *
  * @param scale The scale of the identity matrix
@@ -326,11 +344,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
     {
 
         // Step 1: Extract j-th column of A
-        std::vector<float> v(rows());
-        for (int i = 0; i < rows(); ++i)
-        {
-            v[i] = matrix[i][j];
-        }
+        Matrix v = getColumn(j);
 
         // Step 2: Orthogonalization
         for (int k = 0; k < j; ++k)
@@ -343,7 +357,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
             R[k][j] = dot;
             for (int i = 0; i < rows(); ++i)
             {
-                v[i] -= dot * Q[i][k];
+                v[0][i] -= dot * Q[i][k];
             }
         }
 
@@ -351,7 +365,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
         float norm = 0;
         for (int i = 0; i < rows(); ++i)
         {
-            norm += v[i] * v[i];
+            norm += v[0][i] * v[0][i];
         }
         norm = sqrt(norm);
 
@@ -364,7 +378,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
         R[j][j] = norm;
         for (int i = 0; i < rows(); ++i)
         {
-            Q[i][j] = v[i] / norm;
+            Q[i][j] = v[0][i] / norm;
         }
     }
 
