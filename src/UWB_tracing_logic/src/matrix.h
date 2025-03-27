@@ -10,6 +10,8 @@ public:
     std::vector<std::vector<float>> matrix;
     Matrix(int row, int col);
     Matrix(std::vector<std::vector<float>> input);
+    int rows() const;
+    int cols() const;
     Matrix operator*(const Matrix &other) const;
     void operator*=(float val);
     std::vector<float> &operator[](int row);

@@ -11,9 +11,34 @@ Matrix::Matrix(int row, int col)
     matrix = std::vector<std::vector<float>>(row, std::vector<float>(col, 0));
 }
 
+/**
+ * @brief Matrix constructor with initial values.
+ *
+ * @param input Initial values for the matrix
+ */
 Matrix::Matrix(std::vector<std::vector<float>> input)
 {
     matrix = input;
+}
+
+/**
+ * @brief Get the number of rows in the matrix
+ *
+ * @return int The number of rows
+ */
+int Matrix::rows() const
+{
+    return matrix.size();
+}
+
+/**
+ * @brief Get the number of columns in the matrix
+ *
+ * @return int The number of columns
+ */
+int Matrix::cols() const
+{
+    return matrix[0].size();
 }
 
 /**
@@ -24,23 +49,19 @@ Matrix::Matrix(std::vector<std::vector<float>> input)
  */
 Matrix Matrix::operator*(const Matrix &other) const
 {
-    if (matrix[0].size() != other.matrix.size())
+    if (cols() != other.rows())
     {
         Serial.println("Error: Matrices have incompatible dimensions for multiplication.");
         return Matrix(0, 0);
     }
 
-    int row = matrix.size();
-    int col = other.matrix[0].size();
-    int innerDim = matrix[0].size();
+    Matrix result(rows(), other.cols());
 
-    Matrix result(row, col);
-
-    for (int i = 0; i < row; ++i)
+    for (int i = 0; i < rows(); ++i)
     {
-        for (int j = 0; j < col; ++j)
+        for (int j = 0; j < other.cols(); ++j)
         {
-            for (int k = 0; k < innerDim; ++k)
+            for (int k = 0; k < cols(); ++k)
             {
                 result.matrix[i][j] += matrix[i][k] * other.matrix[k][j];
             }
@@ -56,9 +77,9 @@ Matrix Matrix::operator*(const Matrix &other) const
  */
 void Matrix::operator*=(float val)
 {
-    for (size_t y = 0; y < matrix.size(); y++)
+    for (size_t y = 0; y < rows(); y++)
     {
-        for (size_t x = 0; x < matrix[0].size(); x++)
+        for (size_t x = 0; x < cols(); x++)
         {
             matrix[y][x] *= val;
         }
@@ -95,20 +116,17 @@ const std::vector<float> &Matrix::operator[](int row) const
  */
 Matrix Matrix::operator+(const Matrix &other) const
 {
-    int rows = matrix.size();
-    int cols = matrix[0].size();
-
-    if (rows != other.matrix.size() || cols != other.matrix[0].size())
+    if (rows() != other.rows() || cols() != other.cols())
     {
         Serial.println("Error: Matrices have incompatible dimensions for addition.");
         return Matrix(0, 0);
     }
 
-    Matrix result(rows, cols);
+    Matrix result(rows(), cols());
 
-    for (int y = 0; y < rows; ++y)
+    for (int y = 0; y < rows(); ++y)
     {
-        for (int x = 0; x < cols; ++x)
+        for (int x = 0; x < cols(); ++x)
         {
             result.matrix[y][x] = matrix[y][x] + other.matrix[y][x];
         }
@@ -124,20 +142,17 @@ Matrix Matrix::operator+(const Matrix &other) const
  */
 Matrix Matrix::operator-(const Matrix &other) const
 {
-    int rows = matrix.size();
-    int cols = matrix[0].size();
-
-    if (rows != other.matrix.size() || cols != other.matrix[0].size())
+    if (rows() != other.rows() || cols() != other.cols())
     {
         Serial.println("Error: Matrices have incompatible dimensions for subtraction.");
         return Matrix(0, 0);
     }
 
-    Matrix result(rows, cols);
+    Matrix result(rows(), cols());
 
-    for (int y = 0; y < rows; ++y)
+    for (int y = 0; y < rows(); ++y)
     {
-        for (int x = 0; x < cols; ++x)
+        for (int x = 0; x < cols(); ++x)
         {
             result.matrix[y][x] = matrix[y][x] - other.matrix[y][x];
         }
@@ -150,9 +165,9 @@ Matrix Matrix::operator-(const Matrix &other) const
  */
 void Matrix::print() const
 {
-    for (size_t i = 0; i < matrix.size(); ++i)
+    for (size_t i = 0; i < rows(); ++i)
     {
-        for (size_t j = 0; j < matrix[i].size(); ++j)
+        for (size_t j = 0; j < cols(); ++j)
         {
             Serial.print(matrix[i][j]);
             Serial.print(" ");
@@ -168,9 +183,9 @@ void Matrix::print() const
  */
 void Matrix::set_value(float val)
 {
-    for (size_t y = 0; y < matrix.size(); y++)
+    for (size_t y = 0; y < rows(); y++)
     {
-        for (size_t x = 0; x < matrix[0].size(); x++)
+        for (size_t x = 0; x < cols(); x++)
         {
             matrix[y][x] = val;
         }
@@ -187,10 +202,7 @@ void Matrix::set_value(float val)
  */
 void Matrix::set_identity(float scale, int size, int y, int x)
 {
-    int rows = matrix.size() - y;
-    int cols = matrix[0].size() - x;
-
-    if (size > std::min(rows, cols))
+    if (size > std::min(rows() - y, cols() - x))
     {
         Serial.println("Error: Size too big for the space that was provided");
         return;
@@ -198,7 +210,7 @@ void Matrix::set_identity(float scale, int size, int y, int x)
 
     if (size == 0)
     {
-        size = std::min(rows, cols);
+        size = std::min(rows() - y, cols() - x);
     }
 
     set_value(0);
@@ -215,14 +227,11 @@ void Matrix::set_identity(float scale, int size, int y, int x)
  */
 Matrix Matrix::transpose() const
 {
-    int rows = matrix.size();
-    int cols = matrix[0].size();
+    Matrix transposed(cols(), rows());
 
-    Matrix transposed(cols, rows);
-
-    for (size_t y = 0; y < cols; y++)
+    for (size_t y = 0; y < cols(); y++)
     {
-        for (size_t x = 0; x < rows; x++)
+        for (size_t x = 0; x < rows(); x++)
         {
             transposed[y][x] = matrix[x][y];
         }
@@ -237,10 +246,10 @@ Matrix Matrix::transpose() const
  */
 Matrix Matrix::gaussJordanInverse() const
 {
-    int n = matrix.size();
+    int n = rows();
 
     // Check if the matrix is square
-    if (n != matrix[0].size())
+    if (n != cols())
     {
         Serial.println("Error: Matrix must be square to compute inverse.");
         return Matrix(0, 0); // Return original matrix as a fallback
@@ -308,20 +317,17 @@ Matrix Matrix::gaussJordanInverse() const
  */
 std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
 {
-    int rows = matrix.size();
-    int cols = matrix[0].size();
-
     // Initialize correct sizes
-    Matrix Q(rows, cols);
-    Matrix R(cols, cols);
+    Matrix Q(rows(), cols());
+    Matrix R(cols(), cols());
 
     // Perform Gram-Schmidt
-    for (int j = 0; j < cols; ++j)
+    for (int j = 0; j < cols(); ++j)
     {
 
         // Step 1: Extract j-th column of A
-        std::vector<float> v(rows);
-        for (int i = 0; i < rows; ++i)
+        std::vector<float> v(rows());
+        for (int i = 0; i < rows(); ++i)
         {
             v[i] = matrix[i][j];
         }
@@ -330,12 +336,12 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
         for (int k = 0; k < j; ++k)
         {
             float dot = 0;
-            for (int i = 0; i < rows; ++i)
+            for (int i = 0; i < rows(); ++i)
             {
                 dot += Q[i][k] * matrix[i][j];
             }
             R[k][j] = dot;
-            for (int i = 0; i < rows; ++i)
+            for (int i = 0; i < rows(); ++i)
             {
                 v[i] -= dot * Q[i][k];
             }
@@ -343,7 +349,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
 
         // Step 3: Normalize
         float norm = 0;
-        for (int i = 0; i < rows; ++i)
+        for (int i = 0; i < rows(); ++i)
         {
             norm += v[i] * v[i];
         }
@@ -356,7 +362,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
         }
 
         R[j][j] = norm;
-        for (int i = 0; i < rows; ++i)
+        for (int i = 0; i < rows(); ++i)
         {
             Q[i][j] = v[i] / norm;
         }
@@ -365,8 +371,6 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
     return {Q, R};
 }
 
-
-
 /**
  * @brief Compute the inverse of the matrix using QR decomposition
  *
@@ -374,10 +378,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
  */
 Matrix Matrix::inverseQR() const
 {
-    int rows = matrix.size();
-    int cols = matrix[0].size();
-
-    if (rows != cols)
+    if (rows() != cols())
     {
         Serial.println("Error: Matrix must be square to compute inverse.");
         return Matrix(0, 0);
@@ -389,19 +390,19 @@ Matrix Matrix::inverseQR() const
     Matrix R = qrResult.second;
 
     // Initialize inverse matrix
-    Matrix inverse(rows, cols);
+    Matrix inverse(rows(), cols());
 
     // Solve R * X = Q^T * I (column-wise)
     Matrix Qt = Q.transpose();
-    for (int j = 0; j < cols; ++j)
+    for (int j = 0; j < cols(); ++j)
     {
-        Matrix e(rows, 1);
+        Matrix e(rows(), 1);
         e[j][0] = 1.0; // Column of identity matrix
 
         Matrix b = Qt * e; // Compute Q^T * e_j
 
         // Back-substitution to solve R * x = b
-        for (int i = cols - 1; i >= 0; --i)
+        for (int i = cols() - 1; i >= 0; --i)
         {
             if (R.matrix[i][i] == 0.0)
             {
@@ -410,7 +411,7 @@ Matrix Matrix::inverseQR() const
             }
 
             float sum = 0.0;
-            for (int k = i + 1; k < cols; ++k)
+            for (int k = i + 1; k < cols(); ++k)
             {
                 sum += R.matrix[i][k] * inverse[k][j];
             }
