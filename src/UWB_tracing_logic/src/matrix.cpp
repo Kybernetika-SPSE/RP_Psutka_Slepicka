@@ -51,8 +51,9 @@ Matrix Matrix::operator*(const Matrix &other) const
 {
     if (cols() != other.rows())
     {
-        Serial.println("Error: Matrices have incompatible dimensions for multiplication.");
-        return Matrix(0, 0);
+        Serial.println("Error: Matrices have incompatible dimensions for multiplication. ");
+        Serial.printf("Matrix A: %d x %d, Matrix B: %d x %d\n", rows(), cols(), other.rows(), other.cols());
+        return Matrix(rows(), other.cols());
     }
 
     Matrix result(rows(), other.cols());
@@ -94,6 +95,13 @@ void Matrix::operator*=(float val)
  */
 std::vector<float> &Matrix::operator[](int row)
 {
+    if (row < 0 || row >= rows())
+    {
+        Serial.print("Error: Row index out of bounds. ");
+        Serial.printf("Requested row: %d, but matrix has %d rows.\n", row, rows());
+        return Matrix(rows(), 1)[0]; // Return vector with default values as a fallback
+    }
+
     return matrix[row];
 }
 
@@ -105,7 +113,39 @@ std::vector<float> &Matrix::operator[](int row)
  */
 const std::vector<float> &Matrix::operator[](int row) const
 {
+    if (row < 0 || row >= rows())
+    {
+        Serial.print("Error: Row index out of bounds. ");
+        Serial.printf("Requested row: %d, but matrix has %d rows.\n", row, rows());
+        return Matrix(rows(), 1)[0]; // Return vector with default values as a fallback
+    }
+
     return matrix[row];
+}
+
+/**
+ * @brief Get a column from the matrix
+ *
+ * @param colIndex The index of the column to get
+ * @return Matrix The column vector
+ */
+Matrix Matrix::getColumn(int colIndex) const
+{
+    if (colIndex < 0 || colIndex >= cols())
+    {
+        Serial.print("Error: Column index out of bounds. ");
+        Serial.printf("Requested column: %d, but matrix has %d columns.\n", colIndex, cols());
+        return Matrix(0, 0); // Return empty matrix as a fallback
+    }
+
+    Matrix columnVector(rows(), 1); // Create a column vector (rows x 1)
+
+    for (int i = 0; i < rows(); ++i)
+    {
+        columnVector[i][0] = this->matrix[i][colIndex]; // Copy column values
+    }
+
+    return columnVector;
 }
 
 /**
@@ -193,24 +233,6 @@ void Matrix::set_value(float val)
 }
 
 /**
- * @brief Get a column from the matrix
- *
- * @param colIndex The index of the column to get
- * @return Matrix The column vector
- */
-Matrix Matrix::getColumn(int colIndex) const
-{
-    Matrix columnVector(rows(), 1); // Create a column vector (rows x 1)
-
-    for (int i = 0; i < rows(); ++i)
-    {
-        columnVector[i][0] = this->matrix[i][colIndex]; // Copy column values
-    }
-
-    return columnVector;
-}
-
-/**
  * @brief Set the matrix to identity
  *
  * @param scale The scale of the identity matrix
@@ -220,9 +242,21 @@ Matrix Matrix::getColumn(int colIndex) const
  */
 void Matrix::set_identity(float scale, int size, int y, int x)
 {
+    if (size < 0)
+    {
+        Serial.println("Error set_identity: Size cannot be negative.");
+        return;
+    }
+
+    if (y < 0 || x < 0 || y >= rows() || x >= cols())
+    {
+        Serial.println("Error set_identity: Starting position is out of bounds.");
+        return;
+    }
+
     if (size > std::min(rows() - y, cols() - x))
     {
-        Serial.println("Error: Size too big for the space that was provided");
+        Serial.println("Error set_identity: Size too big for the space that was provided.");
         return;
     }
 
@@ -258,7 +292,6 @@ float Matrix::norm() const
     return sqrt(sum); // Take the square root
 }
 
-
 /**
  * @brief Transpose the matrix
  *
@@ -290,8 +323,17 @@ Matrix Matrix::gaussJordanInverse() const
     // Check if the matrix is square
     if (n != cols())
     {
-        Serial.println("Error: Matrix must be square to compute inverse.");
-        return Matrix(0, 0); // Return original matrix as a fallback
+        Serial.println("Error gaussJordanInverse: Matrix must be square to compute inverse.");
+        return Matrix(rows(), cols());
+    }
+
+    for (int i = 0; i < n; ++i)
+    {
+        if (matrix[i][i] == 0.0)
+        {
+            Serial.println("Error gaussJordanInverse: Singular matrix detected during Gauss-Jordan elimination.");
+            return Matrix(n, n);
+        }
     }
 
     // Create an augmented matrix [A | I]
@@ -356,6 +398,12 @@ Matrix Matrix::gaussJordanInverse() const
  */
 std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
 {
+    if (rows() == 0 || cols() == 0)
+    {
+        Serial.println("Error qrDecomposition: Matrix is empty.");
+        return {Matrix(0, 0), Matrix(0, 0)};
+    }
+
     // Initialize correct sizes
     Matrix Q(rows(), cols());
     Matrix R(cols(), cols());
@@ -378,7 +426,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
             R[k][j] = dot;
             for (int i = 0; i < rows(); ++i)
             {
-                v[0][i] -= dot * Q[i][k];
+                v[i][0] -= dot * Q[i][k];
             }
         }
 
@@ -386,23 +434,22 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
         float norm = 0;
         for (int i = 0; i < rows(); ++i)
         {
-            norm += v[0][i] * v[0][i];
+            norm += v[i][0] * v[i][0];
         }
         norm = sqrt(norm);
 
         if (norm == 0)
         {
-            Serial.println("Error: Zero norm encountered during QR decomposition.");
+            Serial.println("Error qrDecomposition: Zero norm encountered during QR decomposition.");
             return {Matrix(0, 0), Matrix(0, 0)};
         }
 
         R[j][j] = norm;
         for (int i = 0; i < rows(); ++i)
         {
-            Q[i][j] = v[0][i] / norm;
+            Q[i][j] = v[i][0] / norm;
         }
     }
-
     return {Q, R};
 }
 
@@ -413,10 +460,22 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
  */
 Matrix Matrix::inverseQR() const
 {
-    if (rows() != cols())
+    int n = rows();
+
+    // Check if the matrix is square
+    if (n != cols())
     {
-        Serial.println("Error: Matrix must be square to compute inverse.");
-        return Matrix(0, 0);
+        Serial.println("Error inverseQR: Matrix must be square to compute inverse.");
+        return Matrix(rows(), cols());
+    }
+
+    for (int i = 0; i < n; ++i)
+    {
+        if (matrix[i][i] == 0.0)
+        {
+            Serial.println("Error inverseQR: Singular matrix detected during Gauss-Jordan elimination.");
+            return Matrix(n, n);
+        }
     }
 
     // Perform QR decomposition
@@ -425,28 +484,28 @@ Matrix Matrix::inverseQR() const
     Matrix R = qrResult.second;
 
     // Initialize inverse matrix
-    Matrix inverse(rows(), cols());
+    Matrix inverse(n, n);
 
     // Solve R * X = Q^T * I (column-wise)
     Matrix Qt = Q.transpose();
-    for (int j = 0; j < cols(); ++j)
+    for (int j = 0; j < n; ++j)
     {
-        Matrix e(rows(), 1);
+        Matrix e(n, 1);
         e[j][0] = 1.0; // Column of identity matrix
 
         Matrix b = Qt * e; // Compute Q^T * e_j
 
         // Back-substitution to solve R * x = b
-        for (int i = cols() - 1; i >= 0; --i)
+        for (int i = n - 1; i >= 0; --i)
         {
             if (R.matrix[i][i] == 0.0)
             {
-                Serial.println("Error: Singular matrix in upper triangular solve.");
+                Serial.println("Error inverseQR: Singular matrix in upper triangular solve.");
                 return Matrix(0, 0);
             }
 
             float sum = 0.0;
-            for (int k = i + 1; k < cols(); ++k)
+            for (int k = i + 1; k < n; ++k)
             {
                 sum += R.matrix[i][k] * inverse[k][j];
             }
