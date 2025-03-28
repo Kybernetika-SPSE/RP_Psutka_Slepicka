@@ -159,6 +159,7 @@ Matrix Matrix::operator+(const Matrix &other) const
     if (rows() != other.rows() || cols() != other.cols())
     {
         Serial.println("Error: Matrices have incompatible dimensions for addition.");
+        Serial.printf("Matrix A: %d x %d, Matrix B: %d x %d\n", rows(), cols(), other.rows(), other.cols());
         return Matrix(rows(), cols());
     }
 
@@ -185,6 +186,7 @@ Matrix Matrix::operator-(const Matrix &other) const
     if (rows() != other.rows() || cols() != other.cols())
     {
         Serial.println("Error: Matrices have incompatible dimensions for subtraction.");
+        Serial.printf("Matrix A: %d x %d, Matrix B: %d x %d\n", rows(), cols(), other.rows(), other.cols());
         return Matrix(rows(), cols());
     }
 
