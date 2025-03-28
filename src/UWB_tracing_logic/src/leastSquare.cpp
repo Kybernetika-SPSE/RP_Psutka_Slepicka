@@ -1,5 +1,41 @@
 #include "leastSquare.h"
 
+/**
+ * @brief Compute the system of equations for the least squares problem.
+ * 
+ * @param cords Matrix of anchor point coordinates (rows x cols)
+ * @param distances Matrix of distances from the anchor points (rows x 1)
+ * @return std::pair<Matrix, Matrix> (A, b) where A is the matrix of coefficients and b is the right-hand side vector
+ */
+std::pair<Matrix, Matrix> computeEquations(const Matrix &cords, const Matrix &distances)
+{
+    int rows = cords.matrix.size();    // Number of anchor points
+    int cols = cords.matrix[0].size(); // Number of spatial dimensions (2 for XY, 3 for XYZ)
+
+    // Create matrix A (rows-1 x cols) for the system of equations
+    Matrix A(rows - 1, cols);
+    for (int i = 1; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            A[i - 1][j] = cords[i][j] - cords[0][j];
+        }
+    }
+
+    // Create vector b (rows-1 x 1) for the right-hand side of the equations
+    Matrix b(rows - 1, 1);
+    for (int i = 1; i < rows; ++i)
+    {
+        b[i - 1][0] = distances[0][0] * distances[0][0] - distances[i][0] * distances[i][0];
+        for (int j = 0; j < cols; j++)
+        {
+            b[i - 1][0] += (cords[i][j] * cords[i][j]) - (cords[0][j] * cords[0][j]);
+        }
+        b[i - 1][0] /= 2.0;
+    }
+
+    return std::make_pair(A, b);
+}
 
 /**
  * @brief Compute Singular Value Decomposition (SVD) using Jacobi method.
@@ -87,11 +123,6 @@ std::tuple<Matrix, Matrix, Matrix> svd(const Matrix &A)
  */
 Matrix solveLeastSquares(const Matrix &A, const Matrix &b)
 {
-       Serial.println("A");
-       A.print();
-       Serial.println("b");
-       b.print();
-
        // Perform QR decomposition
        std::pair<Matrix, Matrix> qrResult = A.qrDecomposition();
        Matrix Q = qrResult.first;
