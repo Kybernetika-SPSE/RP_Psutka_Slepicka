@@ -135,7 +135,7 @@ Matrix Matrix::getColumn(int colIndex) const
     {
         Serial.print("Error: Column index out of bounds. ");
         Serial.printf("Requested column: %d, but matrix has %d columns.\n", colIndex, cols());
-        return Matrix(0, 0); // Return empty matrix as a fallback
+        return Matrix(rows(), 1); // Return column vector with default values as a fallback
     }
 
     Matrix columnVector(rows(), 1); // Create a column vector (rows x 1)
@@ -159,7 +159,7 @@ Matrix Matrix::operator+(const Matrix &other) const
     if (rows() != other.rows() || cols() != other.cols())
     {
         Serial.println("Error: Matrices have incompatible dimensions for addition.");
-        return Matrix(0, 0);
+        return Matrix(rows(), cols());
     }
 
     Matrix result(rows(), cols());
@@ -185,7 +185,7 @@ Matrix Matrix::operator-(const Matrix &other) const
     if (rows() != other.rows() || cols() != other.cols())
     {
         Serial.println("Error: Matrices have incompatible dimensions for subtraction.");
-        return Matrix(0, 0);
+        return Matrix(rows(), cols());
     }
 
     Matrix result(rows(), cols());
@@ -354,8 +354,8 @@ Matrix Matrix::gaussJordanInverse() const
         float pivot = augmented[i][i];
         if (pivot == 0.0)
         {
-            Serial.println("Error: Singular matrix (non-invertible).");
-            return Matrix(0, 0); // Return original matrix as a fallback
+            Serial.println("Error gaussJordanInverse: Singular matrix (non-invertible).");
+            return Matrix(n, n); // Return original matrix as a fallback
         }
 
         // Normalize pivot row
@@ -401,7 +401,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
     if (rows() == 0 || cols() == 0)
     {
         Serial.println("Error qrDecomposition: Matrix is empty.");
-        return {Matrix(0, 0), Matrix(0, 0)};
+        return {Matrix(rows(), cols()), Matrix(cols(), cols())};
     }
 
     // Initialize correct sizes
@@ -441,7 +441,7 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const
         if (norm == 0)
         {
             Serial.println("Error qrDecomposition: Zero norm encountered during QR decomposition.");
-            return {Matrix(0, 0), Matrix(0, 0)};
+            return {Matrix(rows(), cols()), Matrix(cols(), cols())};
         }
 
         R[j][j] = norm;
@@ -501,7 +501,7 @@ Matrix Matrix::inverseQR() const
             if (R.matrix[i][i] == 0.0)
             {
                 Serial.println("Error inverseQR: Singular matrix in upper triangular solve.");
-                return Matrix(0, 0);
+                return Matrix(n, n);
             }
 
             float sum = 0.0;
