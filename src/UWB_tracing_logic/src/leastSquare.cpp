@@ -1,6 +1,39 @@
 #include "leastSquare.h"
 
 /**
+ * @brief Compute the centroid of a set of coordinates.
+ *
+ * @param cords Matrix of coordinates (rows x cols)
+ * @return Matrix The centroid of the coordinates
+ */
+Matrix computeCentroid(const Matrix &cords)
+{
+       int rows = cords.rows();
+       int cols = cords.cols();
+
+       // Check if the matrix is empty
+       if (rows == 0 || cols == 0)
+       {
+              Serial.println("Error computeCentroid: Empty matrix.");
+              return Matrix(1, cols);
+       }
+
+       // Compute the centroid
+       Matrix centroid(1, cols);
+       for (int j = 0; j < cols; ++j)
+       {
+              float sum = 0;
+              for (int i = 0; i < rows; ++i)
+              {
+                     sum += cords[i][j];
+              }
+              centroid[0][j] = sum / rows;
+       }
+
+       return centroid;
+}
+
+/**
  * @brief Compute the system of equations for the least squares problem.
  *
  * @param cords Matrix of anchor point coordinates (rows x cols)
