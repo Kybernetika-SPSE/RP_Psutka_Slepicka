@@ -148,6 +148,23 @@ std::tuple<Matrix, Matrix, Matrix> svd(const Matrix &A)
 }
 
 /**
+ * @brief Check if the points are coplanar based on the singular values.
+ *
+ * @param Sigma The diagonal matrix of singular values
+ * @param threshold The threshold for coplanarity
+ * @return true If the points are coplanar
+ * @return false If the points are not coplanar
+ */
+bool isCoplanar(const Matrix Sigma, float threshold)
+{
+    // The smallest singular value is in the last diagonal element of Sigma
+    float sigmaMin = Sigma[Sigma.cols() - 1][Sigma.cols() - 1];
+
+    // If sigmaMin is very small, points are coplanar
+    return fabs(sigmaMin) < threshold;
+}
+
+/**
  * @brief Solve the Least Squares using QR Decomposition
  *
  * @param A The matrix A
