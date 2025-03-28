@@ -22,6 +22,7 @@ public:
     void set_value(float val);
     Matrix getColumn(int colIndex) const;
     void set_identity(float scale = 1, int size = 0, int y = 0, int x = 0);
+    float norm() const;
     Matrix transpose() const;
     Matrix gaussJordanInverse() const;
     std::pair<Matrix, Matrix> qrDecomposition() const;

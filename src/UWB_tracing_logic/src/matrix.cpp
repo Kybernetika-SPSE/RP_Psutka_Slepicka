@@ -239,6 +239,27 @@ void Matrix::set_identity(float scale, int size, int y, int x)
 }
 
 /**
+ * @brief Compute the Euclidean norm of the matrix
+ *
+ * @return float The Euclidean norm
+ */
+float Matrix::norm() const
+{
+    float sum = 0.0;
+
+    for (const auto &row : matrix)
+    {
+        for (float val : row)
+        {
+            sum += val * val; // Square each element
+        }
+    }
+
+    return sqrt(sum); // Take the square root
+}
+
+
+/**
  * @brief Transpose the matrix
  *
  * @return Matrix The transposed matrix
