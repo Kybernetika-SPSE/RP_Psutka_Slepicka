@@ -165,6 +165,49 @@ bool isCoplanar(const Matrix Sigma, float threshold)
 }
 
 /**
+ * @brief Check if all given 3D points are collinear using cross product.
+ *
+ * @param points A matrix of 3D points (each row is a point [x, y, z]).
+ * @return true if collinear, false otherwise.
+ */
+bool isCollinear(const Matrix &points, float threshold)
+{
+    if (points.rows() < 3)
+        return true; // Less than 3 points are always collinear
+
+    // Pick the first point to compare with all others
+    float x1 = points[0][0], y1 = points[0][1], z1 = points[0][2];
+
+    // Create a reference vector using the first two points
+    float x2 = points[1][0], y2 = points[1][1], z2 = points[1][2];
+    float Ax = x2 - x1, Ay = y2 - y1, Az = z2 - z1;
+
+    // Check all subsequent points
+    for (int i = 2; i < points.rows(); ++i)
+    {
+        float x3 = points[i][0], y3 = points[i][1], z3 = points[i][2];
+
+        // Create vector B from the first point to the current point
+        float Bx = x3 - x1, By = y3 - y1, Bz = z3 - z1;
+
+        // Compute the cross product of A and B
+        float crossX = Ay * Bz - Az * By;
+        float crossY = Az * Bx - Ax * Bz;
+        float crossZ = Ax * By - Ay * Bx;
+
+        float crossMagnitude = sqrt(crossX * crossX + crossY * crossY + crossZ * crossZ);
+
+        // If the cross product is not close to zero, points are not collinear
+        if (crossMagnitude > threshold)
+        
+        {
+            return false; // Points are not collinear
+        }
+    }
+    return true; // All points are collinear
+}
+
+/**
  * @brief Find the plane equation from the SVD results.
  *
  * @param V The matrix V from SVD
