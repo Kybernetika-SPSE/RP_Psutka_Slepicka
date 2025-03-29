@@ -199,7 +199,7 @@ bool isCollinear(const Matrix &points, float threshold)
 
         // If the cross product is not close to zero, points are not collinear
         if (crossMagnitude > threshold)
-        
+
         {
             return false; // Points are not collinear
         }
@@ -304,21 +304,20 @@ Matrix solveLeastSquares(const Matrix &A, const Matrix &b)
 {
     if (A.rows() == 0 || A.cols() == 0 || b.rows() == 0 || b.cols() != 1)
     {
-        Serial.println("Error: Invalid dimensions for A or b.");
+        Serial.println("Error solveLeastSquares: Invalid dimensions for A or b.");
         return Matrix(A.cols(), 1);
     }
     if (A.rows() < A.cols())
     {
-        Serial.println("Error: More variables than equations.");
+        Serial.println("Error solveLeastSquares: More variables than equations.");
         return Matrix(A.cols(), 1);
     }
     if (A.rows() != b.rows())
     {
-        Serial.println("Error: Incompatible dimensions for A and b.");
+        Serial.println("Error solveLeastSquares: Incompatible dimensions for A and b.");
         return Matrix(A.cols(), 1);
     }
 
-    Serial.println("Performing QR decomposition...");
     // Perform QR decomposition
     std::pair<Matrix, Matrix> qrResult = A.qrDecomposition();
     Matrix Q = qrResult.first;
