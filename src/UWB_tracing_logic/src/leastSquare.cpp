@@ -183,6 +183,13 @@ Plane findPlane(const Matrix &V, const Matrix &Centroid)
     return plane;
 }
 
+/**
+ * @brief Project points onto a plane defined by the plane equation.
+ *
+ * @param points The points to project (rows x 3)
+ * @param plane The plane equation coefficients
+ * @return Matrix The projected points
+ */
 Matrix projectPointsOntoPlane(const Matrix &points, const Plane &plane)
 {
     if (points.rows() == 0 || points.cols() != 3)
