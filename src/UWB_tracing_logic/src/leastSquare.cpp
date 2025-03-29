@@ -175,9 +175,9 @@ bool isCoplanar(const Matrix Sigma, float threshold)
 Plane findPlane(const Matrix &V, const Matrix &Centroid)
 {
     Plane plane;
-    plane.a = V[0][0];                                                                           // Normal x
-    plane.b = V[1][0];                                                                           // Normal y
-    plane.c = V[2][0];                                                                           // Normal z
+    plane.a = V[0][2];                                                                           // Normal x
+    plane.b = V[1][2];                                                                           // Normal y
+    plane.c = V[2][2];                                                                           // Normal z
     plane.d = -(plane.a * Centroid[0][0] + plane.b * Centroid[0][1] + plane.c * Centroid[0][2]); // Plane equation: ax + by + cz + d = 0
 
     return plane;
@@ -225,20 +225,23 @@ Matrix projectPointsOntoPlane(const Matrix &points, const Plane &plane)
 
 /**
  * @brief Convert a 3D point on a plane into 2D coordinates using plane basis vectors.
- * 
+ *
  * @param point The 3D point (Matrix 1x3)
  * @param planeU First basis vector of the plane (Matrix 1x3)
  * @param planeV Second basis vector of the plane (Matrix 1x3)
  * @return Matrix The 2D coordinates (Matrix 1x2)
  */
-Matrix convert3DTo2D(const Matrix &points, const Matrix &planeU, const Matrix &planeV){
-    if (points.cols() != 3 || planeU.cols() != 3 || planeV.cols() != 3) {
+Matrix convert3DTo2D(const Matrix &points, const Matrix &planeU, const Matrix &planeV)
+{
+    if (points.cols() != 3 || planeU.cols() != 3 || planeV.cols() != 3)
+    {
         Serial.println("Error: Matrices must have 3 columns for 3D points.");
         return Matrix(points.rows(), 2);
     }
 
     Matrix result(points.rows(), 2);
-    for (int i = 0; i < points.rows(); ++i) {
+    for (int i = 0; i < points.rows(); ++i)
+    {
         // Project the 3D point onto the plane using the basis vectors
         result[i][0] = points[i][0] * planeU[0][0] + points[i][1] * planeU[0][1] + points[i][2] * planeU[0][2];
         result[i][1] = points[i][0] * planeV[0][0] + points[i][1] * planeV[0][1] + points[i][2] * planeV[0][2];
