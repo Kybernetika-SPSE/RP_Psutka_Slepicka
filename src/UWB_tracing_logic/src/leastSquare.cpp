@@ -175,12 +175,45 @@ bool isCoplanar(const Matrix Sigma, float threshold)
 Plane findPlane(const Matrix &V, const Matrix &Centroid)
 {
     Plane plane;
-    plane.a = V[0][0]; // Normal x
-    plane.b = V[1][0]; // Normal y
-    plane.c = V[2][0]; // Normal z
+    plane.a = V[0][0];                                                                           // Normal x
+    plane.b = V[1][0];                                                                           // Normal y
+    plane.c = V[2][0];                                                                           // Normal z
     plane.d = -(plane.a * Centroid[0][0] + plane.b * Centroid[0][1] + plane.c * Centroid[0][2]); // Plane equation: ax + by + cz + d = 0
-    
+
     return plane;
+}
+
+Matrix projectPointsOntoPlane(const Matrix &points, const Plane &plane)
+{
+    if (points.rows() == 0 || points.cols() != 3)
+    {
+        Serial.println("Error: Invalid dimensions for points.");
+        return points;
+    }
+
+    float a = plane.a;
+    float b = plane.b;
+    float c = plane.c;
+    float d = plane.d;
+
+    Matrix projectedPoints(points.rows(), points.cols());
+
+    for (int i = 0; i < points.rows(); ++i)
+    {
+        float x = points[i][0];
+        float y = points[i][1];
+        float z = points[i][2];
+
+        // Calculate the distance from the point to the plane
+        float lambda = (a * x + b * y + c * z + d) / (a * a + b * b + c * c);
+
+        // Project the point onto the plane
+        projectedPoints[i][0] = x - lambda * a;
+        projectedPoints[i][1] = y - lambda * b;
+        projectedPoints[i][2] = z - lambda * c;
+    }
+
+    return projectedPoints;
 }
 
 /**
