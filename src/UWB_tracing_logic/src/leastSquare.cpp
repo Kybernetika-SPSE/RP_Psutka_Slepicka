@@ -224,6 +224,30 @@ Matrix projectPointsOntoPlane(const Matrix &points, const Plane &plane)
 }
 
 /**
+ * @brief Convert a 3D point on a plane into 2D coordinates using plane basis vectors.
+ * 
+ * @param point The 3D point (Matrix 1x3)
+ * @param planeU First basis vector of the plane (Matrix 1x3)
+ * @param planeV Second basis vector of the plane (Matrix 1x3)
+ * @return Matrix The 2D coordinates (Matrix 1x2)
+ */
+Matrix convert3DTo2D(const Matrix &points, const Matrix &planeU, const Matrix &planeV){
+    if (points.cols() != 3 || planeU.cols() != 3 || planeV.cols() != 3) {
+        Serial.println("Error: Matrices must have 3 columns for 3D points.");
+        return Matrix(points.rows(), 2);
+    }
+
+    Matrix result(points.rows(), 2);
+    for (int i = 0; i < points.rows(); ++i) {
+        // Project the 3D point onto the plane using the basis vectors
+        result[i][0] = points[i][0] * planeU[0][0] + points[i][1] * planeU[0][1] + points[i][2] * planeU[0][2];
+        result[i][1] = points[i][0] * planeV[0][0] + points[i][1] * planeV[0][1] + points[i][2] * planeV[0][2];
+    }
+
+    return result;
+}
+
+/**
  * @brief Solve the Least Squares using QR Decomposition
  *
  * @param A The matrix A
