@@ -304,22 +304,22 @@ Matrix convert3DTo2D(const Matrix &points, const Matrix &planeU, const Matrix &p
 Matrix reconstruct3D(const Matrix &lsSolution2D, const Matrix &planeU, const Matrix &planeV)
 {
     // Check if the input matrices have the correct dimensions
-    if (lsSolution2D.rows() != 2)
+    if (lsSolution2D.cols() != 2)
     {
-        Serial.println("Error: lsSolution2D must have 2 rows.");
-        return Matrix(3, 1);
+        Serial.println("Error reconstruct3D: lsSolution2D must have 2 rows.");
+        return Matrix(1, 3);
     }
     if (planeU.cols() != 3 || planeV.cols() != 3)
     {
-        Serial.println("Error: planeU and planeV must have 3 columns.");
-        return Matrix(3, 1);
+        Serial.println("Error reconstruct3D: planeU and planeV must have 3 columns.");
+        return Matrix(1, 3);
     }
 
     // Reconstruct the 3D point using the basis vectors
-    Matrix result(3, 1);
-    result[0][0] = lsSolution2D[0][0] * planeU[0][0] + lsSolution2D[1][0] * planeV[0][0];
-    result[1][0] = lsSolution2D[0][0] * planeU[0][1] + lsSolution2D[1][0] * planeV[0][1];
-    result[2][0] = lsSolution2D[0][0] * planeU[0][2] + lsSolution2D[1][0] * planeV[0][2];
+    Matrix result(1, 3);
+    result[0][0] = lsSolution2D[0][0] * planeU[0][0] + lsSolution2D[0][1] * planeV[0][0];
+    result[0][1] = lsSolution2D[0][0] * planeU[0][1] + lsSolution2D[0][1] * planeV[0][1];
+    result[0][2] = lsSolution2D[0][0] * planeU[0][2] + lsSolution2D[0][1] * planeV[0][2];
 
     return result;
 }
@@ -336,17 +336,17 @@ Matrix solveLeastSquares(const Matrix &A, const Matrix &b)
     if (A.rows() == 0 || A.cols() == 0 || b.rows() == 0 || b.cols() != 1)
     {
         Serial.println("Error solveLeastSquares: Invalid dimensions for A or b.");
-        return Matrix(A.cols(), 1);
+        return Matrix(1, A.cols());
     }
     if (A.rows() < A.cols())
     {
         Serial.println("Error solveLeastSquares: More variables than equations.");
-        return Matrix(A.cols(), 1);
+        return Matrix(1, A.cols());
     }
     if (A.rows() != b.rows())
     {
         Serial.println("Error solveLeastSquares: Incompatible dimensions for A and b.");
-        return Matrix(A.cols(), 1);
+        return Matrix(1, A.cols());
     }
 
     // Perform QR decomposition
@@ -358,5 +358,7 @@ Matrix solveLeastSquares(const Matrix &A, const Matrix &b)
     Matrix Qtb = Q.transpose() * b;
 
     // Solve for x using inverse of R
-    return R.inverseQR() * Qtb;
+    Matrix result = R.inverseQR() * Qtb;
+
+    return result.transpose();
 }
