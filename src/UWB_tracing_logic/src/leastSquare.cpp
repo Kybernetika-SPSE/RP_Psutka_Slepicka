@@ -303,22 +303,29 @@ Matrix convert3DTo2D(const Matrix &points, const Matrix &planeU, const Matrix &p
  */
 Matrix reconstruct3D(const Matrix &lsSolution2D, const Matrix &planeU, const Matrix &planeV, const Matrix &Centroid)
 {
-    Serial.println("Step 1");
-    if (lsSolution2D.rows() != 2 || planeU.cols() != 3 || planeV.cols() != 3)
+    // Check if the input matrices have the correct dimensions
+    if (lsSolution2D.rows() != 2)
     {
-        Serial.println("Error: Matrices must have 2 columns for 2D points and 3 columns for basis vectors.");
-        return Matrix(lsSolution2D.rows(), 3);
+        Serial.println("Error: lsSolution2D must have 2 rows.");
+        return Matrix(3, 1);
+    }
+    if (planeU.cols() != 3 || planeV.cols() != 3)
+    {
+        Serial.println("Error: planeU and planeV must have 3 columns.");
+        return Matrix(3, 1);
+    }
+    if (Centroid.cols() != 3)
+    {
+        Serial.println("Error: Centroid must have 3 columns.");
+        return Matrix(3, 1);
     }
 
-    Serial.println("Step 2");
     // Reconstruct the 3D point using the basis vectors
     Matrix result(3, 1);
     result[0][0] = Centroid[0][0] + lsSolution2D[0][0] * planeU[0][0] + lsSolution2D[1][0] * planeV[0][0];
     result[1][0] = Centroid[0][0] + lsSolution2D[0][0] * planeU[0][1] + lsSolution2D[1][0] * planeV[0][1];
     result[2][0] = Centroid[0][0] + lsSolution2D[0][0] * planeU[0][2] + lsSolution2D[1][0] * planeV[0][2];
 
-
-    Serial.println("Step 3");
     return result;
 }
 
