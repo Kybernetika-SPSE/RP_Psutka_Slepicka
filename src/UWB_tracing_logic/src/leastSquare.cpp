@@ -294,6 +294,35 @@ Matrix convert3DTo2D(const Matrix &points, const Matrix &planeU, const Matrix &p
 }
 
 /**
+ * @brief Reconstruct a 3D point from its 2D coordinates using the plane basis vectors.
+ *
+ * @param lsSolution2D The 2D coordinates (Matrix 1x2)
+ * @param planeU First basis vector of the plane (Matrix 1x3)
+ * @param planeV Second basis vector of the plane (Matrix 1x3)
+ * @return Matrix The reconstructed 3D point (Matrix 1x3)
+ */
+Matrix reconstruct3D(const Matrix &lsSolution2D, const Matrix &planeU, const Matrix &planeV, const Matrix &Centroid)
+{
+    Serial.println("Step 1");
+    if (lsSolution2D.rows() != 2 || planeU.cols() != 3 || planeV.cols() != 3)
+    {
+        Serial.println("Error: Matrices must have 2 columns for 2D points and 3 columns for basis vectors.");
+        return Matrix(lsSolution2D.rows(), 3);
+    }
+
+    Serial.println("Step 2");
+    // Reconstruct the 3D point using the basis vectors
+    Matrix result(3, 1);
+    result[0][0] = Centroid[0][0] + lsSolution2D[0][0] * planeU[0][0] + lsSolution2D[1][0] * planeV[0][0];
+    result[1][0] = Centroid[0][0] + lsSolution2D[0][0] * planeU[0][1] + lsSolution2D[1][0] * planeV[0][1];
+    result[2][0] = Centroid[0][0] + lsSolution2D[0][0] * planeU[0][2] + lsSolution2D[1][0] * planeV[0][2];
+
+
+    Serial.println("Step 3");
+    return result;
+}
+
+/**
  * @brief Solve the Least Squares using QR Decomposition
  *
  * @param A The matrix A
