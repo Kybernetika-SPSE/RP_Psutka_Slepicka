@@ -314,11 +314,6 @@ Matrix reconstruct3D(const Matrix &lsSolution2D, const Matrix &planeU, const Mat
         Serial.println("Error: planeU and planeV must have 3 columns.");
         return Matrix(3, 1);
     }
-    if (Centroid.cols() != 3)
-    {
-        Serial.println("Error: Centroid must have 3 columns.");
-        return Matrix(3, 1);
-    }
 
     // Reconstruct the 3D point using the basis vectors
     Matrix result(3, 1);
