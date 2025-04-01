@@ -1,3 +1,6 @@
+#ifndef TRILATERATION_H
+#define TRILATERATION_H
+
 #include <Arduino.h>
 #include "matrix.h"
 #include "leastSquare.h"
@@ -7,15 +10,24 @@
 
 struct DataPoint
 {
-    float x, y, z;
-    float d;
+    float x, y, z;  // Coordinates of the anchor point
+    float d;        // Distance to the target
 };
 
-DataPoint buffer[BUFFER_SIZE]; // Circular buffer
-int bufferIndex = 0;           // Points to the next insertion position
-int count = 0;                 // Number of data points in the buffer
+/**
+ * @brief Trilateration class.
+ */
+class trilateration
+{
+public:
+    void trilaterate(int numOfDimensions = 3);
+    void update(const DataPoint &point);
 
-float x, y, z; // Anchor coordinates
-float d;       // Distance to the target
+private:
+    int bufferIndex = 0; // Points to the next insertion position
+    int count = 0;       // Number of data points in the buffer
+    KalmanFilter kf;     // Kalman filter object
+    DataPoint buffer[BUFFER_SIZE]; // Circular buffer for storing data points
+};
 
-KalmanFilter kf; // Kalman filter object
+#endif // TRILATERATION_H

@@ -1,11 +1,29 @@
 #include "trilateration.h"
 
 /**
+ * @brief Initialize the trilateration algorithm.
+ * 
+ * @param numOfDimensions The number of dimensions (2D or 3D)
+ */
+void trilateration::trilaterate(int numOfDimensions)
+{
+    // Initialize the Kalman filter with the specified number of dimensions
+    kf = KalmanFilter(numOfDimensions);
+
+    // Initialize the buffer index and count
+    bufferIndex = 0;
+    count = 0;
+
+    // Print the initial state
+    Serial.println("Trilateration initialized.");
+}
+
+/**
  * @brief Update the trilateration algorithm with a new data point.
  *
  * @param point The new data point (x, y, z, d)
  */
-void update(const DataPoint &point)
+void trilateration::update(const DataPoint &point)
 {
     // Store the data point in the buffer
     buffer[bufferIndex] = point;
