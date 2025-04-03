@@ -5,7 +5,7 @@
  * 
  * @param numOfDimensions The number of dimensions (2D or 3D)
  */
-void trilateration::trilaterate(int numOfDimensions)
+trilateration::trilateration(int numOfDimensions)
 {
     // Initialize the Kalman filter with the specified number of dimensions
     kf = KalmanFilter(numOfDimensions);
@@ -152,4 +152,14 @@ void trilateration::update(const DataPoint &point)
 
     // Update the Kalman filter with the new solution
     kf.update(x);
+}
+
+/**
+ * @brief Get the current state of the Kalman filter.
+ *
+ * @return Matrix The current state of the Kalman filter.
+ */
+Matrix trilateration::getState() const
+{
+    return kf.getState();
 }

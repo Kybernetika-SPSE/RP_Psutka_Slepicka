@@ -20,8 +20,10 @@ struct DataPoint
 class trilateration
 {
 public:
-    void trilaterate(int numOfDimensions = 3);
+    trilateration(int numOfDimensions = 3);
     void update(const DataPoint &point);
+    Matrix getState() const;
+    
 
 private:
     int bufferIndex = 0; // Points to the next insertion position
