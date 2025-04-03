@@ -163,3 +163,15 @@ Matrix trilateration::getState() const
 {
     return kf.getState();
 }
+
+/**
+ * @brief Print the contents of the buffer.
+ */
+void trilateration::printBuffer() const
+{
+    Serial.println("Buffer contents:");
+    for (int i = 0; i < count; ++i)
+    {
+        Serial.printf("Point %d: x=%.2f, y=%.2f, z=%.2f, d=%.2f\n", i, buffer[i].x, buffer[i].y, buffer[i].z, buffer[i].d);
+    }
+}

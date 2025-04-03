@@ -23,7 +23,7 @@ public:
     trilateration(int numOfDimensions = 3);
     void update(const DataPoint &point);
     Matrix getState() const;
-    
+    void printBuffer() const;
 
 private:
     int bufferIndex = 0; // Points to the next insertion position
