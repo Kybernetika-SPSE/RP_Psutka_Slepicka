@@ -178,6 +178,27 @@ Matrix Matrix::getColumn(int colIndex) const
 }
 
 /**
+ * @brief Set a column in the matrix
+ *
+ * @param colIndex The index of the column to set
+ * @param col The column vector to set
+ */
+void Matrix::setColumn(int colIndex, const Matrix &col)
+{
+    if (col.rows() != this->rows())
+    {
+        // Handle error: the number of rows in the column must match the number of rows in the matrix
+        Serial.println("Error: Column dimensions do not match matrix dimensions.");
+        return;
+    }
+
+    for (int i = 0; i < this->rows(); ++i)
+    {
+        this->matrix[i][colIndex] = col[i][0]; // Update the matrix with the new column values
+    }
+}
+
+/**
  * @brief Overload + to add two matrices
  *
  * @param other The other matrix
@@ -547,7 +568,6 @@ Matrix Matrix::inverseQR() const
     return inverse;
 }
 
-
 /**
  * @brief Compute the eigen decomposition of a symmetric matrix
  *
@@ -557,10 +577,10 @@ Matrix Matrix::inverseQR() const
 std::pair<Matrix, Matrix> Matrix::eigen_decomposition() const
 {
     int n = rows();
-    Matrix eigenvectors(n, n);  // Initialize the eigenvector matrix
-    eigenvectors.set_identity();  // Set it to identity initially
+    Matrix eigenvectors(n, n);   // Initialize the eigenvector matrix
+    eigenvectors.set_identity(); // Set it to identity initially
 
-    Matrix A(matrix);  // We work on AtA (it will be modified)
+    Matrix A(matrix); // We work on AtA (it will be modified)
 
     // Convergence threshold for Jacobi rotations
     float threshold = 1e-6;
@@ -569,7 +589,7 @@ std::pair<Matrix, Matrix> Matrix::eigen_decomposition() const
     while (!converged)
     {
         converged = true;
-        
+
         // Loop over all pairs (i, j)
         for (int i = 0; i < n - 1; ++i)
         {
@@ -605,7 +625,7 @@ std::pair<Matrix, Matrix> Matrix::eigen_decomposition() const
                         eigenvectors[k][j] = s * v_ik + c * v_jk;
                     }
 
-                    converged = false;  // Continue iterating if any off-diagonal element was large enough to rotate
+                    converged = false; // Continue iterating if any off-diagonal element was large enough to rotate
                 }
             }
         }

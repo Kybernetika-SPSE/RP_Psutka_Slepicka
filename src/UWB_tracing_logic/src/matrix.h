@@ -23,6 +23,7 @@ public:
     std::vector<float> &operator[](int row);
     const std::vector<float> &operator[](int row) const;
     Matrix getColumn(int colIndex) const;
+    void setColumn(int colIndex, const Matrix &col);
 
     Matrix operator+(const Matrix &other) const;
     Matrix operator-(const Matrix &other) const;
