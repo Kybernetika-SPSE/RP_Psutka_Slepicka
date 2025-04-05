@@ -18,6 +18,7 @@ public:
 
     Matrix operator*(const Matrix &other) const;
     void operator*=(float val);
+    Matrix operator*(float val) const;
 
     std::vector<float> &operator[](int row);
     const std::vector<float> &operator[](int row) const;

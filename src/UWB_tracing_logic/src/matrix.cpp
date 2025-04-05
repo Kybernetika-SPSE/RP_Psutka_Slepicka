@@ -98,6 +98,25 @@ void Matrix::operator*=(float val)
 }
 
 /**
+ * @brief Overload the * operator to multiply a matrix by a scalar
+ *
+ * @param val The scalar value
+ * @return Matrix The result of the multiplication
+ */
+Matrix Matrix::operator*(float val) const
+{
+    Matrix result(rows(), cols());
+    for (size_t y = 0; y < rows(); y++)
+    {
+        for (size_t x = 0; x < cols(); x++)
+        {
+            result[y][x] = matrix[y][x] * val;
+        }
+    }
+    return result;
+}
+
+/**
  * @brief Overload [] to return a reference to a row
  *
  * @param row The row index
