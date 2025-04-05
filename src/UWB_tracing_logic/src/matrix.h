@@ -8,6 +8,8 @@ class Matrix
 {
 public:
     std::vector<std::vector<float>> matrix;
+
+    Matrix();
     Matrix(int row, int col);
     Matrix(std::vector<std::vector<float>> input);
 

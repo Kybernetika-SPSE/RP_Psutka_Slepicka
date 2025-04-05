@@ -1,6 +1,16 @@
 #include "matrix.h"
 
 /**
+ * @brief Default constructor for the Matrix class.
+ *
+ * Initializes an empty matrix with 0 rows and 0 columns.
+ */
+Matrix::Matrix()
+{
+    matrix = std::vector<std::vector<float>>(0, std::vector<float>(0, 0));
+}
+
+/**
  * @brief Matrix constructor.
  *
  * @param row Number of rows
