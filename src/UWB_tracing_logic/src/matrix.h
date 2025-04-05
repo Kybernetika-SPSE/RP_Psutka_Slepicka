@@ -37,6 +37,8 @@ public:
 
     std::pair<Matrix, Matrix> qrDecomposition() const;
     Matrix inverseQR() const;
+
+    std::pair<Matrix, Matrix> eigen_decomposition() const;
 };
 
 #endif // MATRIX_H

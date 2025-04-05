@@ -527,3 +527,71 @@ Matrix Matrix::inverseQR() const
 
     return inverse;
 }
+
+
+/**
+ * @brief Compute the eigen decomposition of a symmetric matrix
+ *
+ * @param AtA The symmetric matrix to decompose
+ * @return std::pair<Matrix, Matrix> The eigenvalues and eigenvectors
+ */
+std::pair<Matrix, Matrix> Matrix::eigen_decomposition() const
+{
+    int n = rows();
+    Matrix eigenvectors(n, n);  // Initialize the eigenvector matrix
+    eigenvectors.set_identity();  // Set it to identity initially
+
+    Matrix A(matrix);  // We work on AtA (it will be modified)
+
+    // Convergence threshold for Jacobi rotations
+    float threshold = 1e-6;
+    bool converged = false;
+
+    while (!converged)
+    {
+        converged = true;
+        
+        // Loop over all pairs (i, j)
+        for (int i = 0; i < n - 1; ++i)
+        {
+            for (int j = i + 1; j < n; ++j)
+            {
+                // If the off-diagonal element is large enough to rotate
+                float a_ij = A[i][j];
+                if (fabs(a_ij) > threshold)
+                {
+                    // Compute the rotation angle (theta)
+                    float tau = (A[j][j] - A[i][i]) / (2 * a_ij);
+                    float t = (tau >= 0) ? (1 / (tau + sqrt(1 + tau * tau))) : (-1 / (-tau + sqrt(1 + tau * tau)));
+                    float c = 1 / sqrt(1 + t * t);
+                    float s = t * c;
+
+                    // Apply rotation to A
+                    for (int k = 0; k < n; ++k)
+                    {
+                        float a_ik = A[k][i];
+                        float a_jk = A[k][j];
+
+                        A[k][i] = c * a_ik - s * a_jk;
+                        A[k][j] = s * a_ik + c * a_jk;
+                    }
+
+                    // Apply rotation to eigenvectors
+                    for (int k = 0; k < n; ++k)
+                    {
+                        float v_ik = eigenvectors[k][i];
+                        float v_jk = eigenvectors[k][j];
+
+                        eigenvectors[k][i] = c * v_ik - s * v_jk;
+                        eigenvectors[k][j] = s * v_ik + c * v_jk;
+                    }
+
+                    converged = false;  // Continue iterating if any off-diagonal element was large enough to rotate
+                }
+            }
+        }
+    }
+
+    // Now, the diagonal of A contains the eigenvalues, and eigenvectors contain the eigenvectors
+    return {A, eigenvectors};
+}
