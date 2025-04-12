@@ -1,5 +1,5 @@
 # Dílčí vypracovnání
-[here](škola_info\README.md)
+[here](škola_info/README.md)
 ---
 
 # 🛰️ Lokalizační systém na dvoupásovém vozidle pomocí ESP32, UWB a Wi-Fi
