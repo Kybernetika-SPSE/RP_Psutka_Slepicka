@@ -9,13 +9,14 @@
 class KalmanFilter
 {
 public:
-    KalmanFilter();
+    KalmanFilter(int numvberOfDimensions = 3);
     void predict(float dt);
     void update(const Matrix &measurement);
     Matrix getState() const;
     void adjustKalmanNoise();
 
 private:
+    int numOfDimensions; // Number of dimensions (2D or 3D)
     Matrix X;            // State vector [x, y, z, vx, vy, vz]
     Matrix F;            // State transition matrix
     Matrix P;            // Covariance matrix
