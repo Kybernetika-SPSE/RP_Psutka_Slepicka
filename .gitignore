@@ -1,3 +1,7 @@
 */*backups/
 fp-info-cache
 PCB/hromada*
+**/.vscode
+**/build
+**/scan/log.scan.*
+**/.devcontainer
