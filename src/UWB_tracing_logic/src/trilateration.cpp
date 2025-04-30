@@ -2,10 +2,11 @@
 
 /**
  * @brief Initialize the trilateration algorithm.
- * 
+ *
  * @param numOfDimensions The number of dimensions (2D or 3D)
  */
 trilateration::trilateration(int numOfDimensions)
+    : numOfDimensions(numOfDimensions)
 {
     // Initialize the Kalman filter with the specified number of dimensions
     kf = KalmanFilter(numOfDimensions);
@@ -13,9 +14,6 @@ trilateration::trilateration(int numOfDimensions)
     // Initialize the buffer index and count
     bufferIndex = 0;
     count = 0;
-
-    // Print the initial state
-    Serial.println("Trilateration initialized.");
 }
 
 /**
@@ -32,30 +30,36 @@ void trilateration::update(const DataPoint &point)
         count++;
 
     // Check if we have enough points to compute the least squares solution
-    if (count < 4)
+    if (count < (numOfDimensions + 1)) // At least numOfDimensions + 1 points are needed
     {
         Serial.println("Not enough points to compute the least squares solution.");
         return;
     }
 
     // Create matrices for the anchor points and distances
-    Matrix cords(count, 3);
+    Matrix cords(count, numOfDimensions);
     Matrix distances(count, 1);
 
     // Copy the data points to the matrices
     for (int i = 0; i < count; ++i)
     {
-        cords[i][0] = buffer[i].x;
-        cords[i][1] = buffer[i].y;
-        cords[i][2] = buffer[i].z;
+        for (int j = 0; j < numOfDimensions; ++j)
+        {
+            cords[i][j] = (j == 0) ? buffer[i].x : (j == 1) ? buffer[i].y
+                                                            : buffer[i].z;
+        }
         distances[i][0] = buffer[i].d;
     }
 
-    // Check if the points are collinear
+    // Check if the points are collinear (2D) or coplanar (3D)
     if (isCollinear(cords))
     {
         Serial.println("Warning: The points are collinear. Ignoring the update.");
         return;
+    }
+    else if (numOfDimensions == 3 && isCoplanar(cords))
+    {
+        Serial.println("Warning: The points are coplanar. Assuming target is on the plane.");
     }
 
     // Compute the centroid of the anchor points
@@ -87,14 +91,12 @@ void trilateration::update(const DataPoint &point)
     Serial.println("V:");
     V.print();
 
-    // Compute the linear equations (If the points are coplanar, this will be rewritten)
+    // Compute the linear equations
     std::pair<Matrix, Matrix> equations = computeEquations(centeredCords, distances);
 
-    // Check if the points are coplanar
-    if (isCoplanar(Sigma))
+    // Handle coplanar points in 3D
+    if (numOfDimensions == 3 && isCoplanar(Sigma))
     {
-        Serial.println("Warning: The points are coplanar. Assuming target is on the plane.");
-
         // Find the plane equation
         Plane plane = findPlane(V, centroid);
         Serial.printf("Plane equation: %.2fx + %.2fy + %.2fz + %.2f = 0\n", plane.a, plane.b, plane.c, plane.d);
@@ -107,7 +109,6 @@ void trilateration::update(const DataPoint &point)
         // Convert the 3D points to 2D coordinates
         Matrix planeU = V.getColumn(0).transpose();
         Matrix planeV = V.getColumn(1).transpose();
-        // Normalize the basis vectors
         planeU *= (1.0 / planeU.norm());
         planeV *= (1.0 / planeV.norm());
         Serial.println("Vector U:");
@@ -133,12 +134,11 @@ void trilateration::update(const DataPoint &point)
     x.print();
 
     // Convert the solution back to 3D coordinates, if necessary
-    if (x.cols() == 2)
+    if (numOfDimensions == 3 && x.cols() == 2)
     {
         Matrix lsSolution2D = x;
         Matrix planeU = V.getColumn(0).transpose();
         Matrix planeV = V.getColumn(1).transpose();
-        // Normalize the basis vectors
         planeU *= (1.0 / planeU.norm());
         planeV *= (1.0 / planeV.norm());
         x = reconstruct3D(lsSolution2D, planeU, planeV);
@@ -147,7 +147,7 @@ void trilateration::update(const DataPoint &point)
     }
     x = x + centroid; // Add the centroid to the solution
 
-    Serial.println("Final 3D Point:");
+    Serial.println("Final Point:");
     x.print();
 
     // Update the Kalman filter with the new solution

@@ -26,6 +26,7 @@ public:
     void printBuffer() const;
 
 private:
+    int numOfDimensions; // Number of dimensions (2D or 3D)
     int bufferIndex = 0; // Points to the next insertion position
     int count = 0;       // Number of data points in the buffer
     KalmanFilter kf;     // Kalman filter object
