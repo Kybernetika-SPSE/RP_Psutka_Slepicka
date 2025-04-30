@@ -3,6 +3,8 @@
 ## Psutka
 [zadání](RP_Zadání_Psutka.pdf)
 
+[dokumentace](docs/Psutka/)
+
 + [Prosinec](reporty/Psutka/2024_12_20.pdf)
 + [Leden](reporty/Psutka/2025_1_31.pdf)
 + [Únor](reporty/Psutka/2025_2_28.pdf)
@@ -11,6 +13,8 @@
 
 ## Slepička
 [zadání](RP_Zadání_Slepička.pdf)
+
+[dokumentace](docs/Slepička/)
 
 + [Prosinec](reporty/Slepička/2024_12_20.pdf)
 + [Leden](reporty/Slepička/2025_1_31.pdf)
