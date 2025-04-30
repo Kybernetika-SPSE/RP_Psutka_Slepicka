@@ -78,7 +78,7 @@ def scan(ser, amount, networks, location, name):
           
         print()
 
-
+# Main function to load, start serial port, scan, and save networks
 def main():
     networks = load_networks("scanData/networks_raw.json")
     ser = open_serial_port('/dev/ttyUSB0', 115200, timeout=10)
@@ -109,7 +109,7 @@ def main():
             print()
     finally:
         ser.close()
-        
 
+# Entry point of the script
 if __name__ == "__main__":
     main()
